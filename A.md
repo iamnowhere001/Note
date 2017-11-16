@@ -23,7 +23,7 @@
 
 正是这句话深深地吸引了我，于是决定利用这两周的业余时间读完并总结了这本书。
 
-这本书讲的就是关于”如何提高代码的可读性“。
+这本书讲的就是关于“如何提高代码的可读性”。
 总结下来，这本书从浅入深，在三个层次告诉了我们如何让代码易于理解：
 
 * 表层上的改进：在命名方法（变量名，方法名），变量声明，代码格式，注释等方面的改进。
@@ -548,7 +548,7 @@ BigFunction {
 }
 ```
 
-### 1.3.5 保持风格一致性(括号)
+### 1.3.5 保持风格一致性
 
 有些时候，你的某些代码风格可能与大众比较容易接受的风格不太一样。但是如果你在你自己所写的代码各处能够保持你这种独有的风格，也是可以对代码的可读性有积极的帮助的。
 
@@ -575,7 +575,73 @@ if(condition)
 * 类的实现
 * 方法的实现
 
-## 1.3.6 利用代码块
+
+属性应该尽可能描述性地命名，避免缩写，并且是小写字母开头的驼峰命名。我们的工具可以很方便地帮我们自动补全所有东西。所以没理由少打几个字符了，并且最好尽可能在你源码里表达更多东西。
+
+```objective-c
+NSString *text;
+```
+
+不要这样 :
+```objective-c
+NSString* text;
+NSString * text;
+```
+
+（注意：这个习惯和常量不同，这是主要从常用和可读性考虑。 C++ 的开发者偏好从变量名中分离类型，作为类型它应该是
+`NSString*` （对于从堆中分配的对象，对于C++是能从栈上分配的）格式。）
+
+当使用 setter getter 方法的时候尽量使用点符号。应该总是用点符号来访问以及设置属性。
+
+```Objective-C
+view.backgroundColor = [UIColor orangeColor];
+[UIApplication sharedApplication].delegate;
+
+```
+
+不要这样:
+```Objective-C
+[view setBackgroundColor:[UIColor orangeColor]];
+UIApplication.sharedApplication.delegate;
+```
+
+使用点符号会让表达更加清晰并且帮助区分属性访问和方法调用
+
+推荐按照下面的格式来定义属性
+
+```objective-c
+@property (nonatomic, readwrite, copy) NSString *name;
+```
+
+属性的参数应该按照下面的顺序排列： 原子性，读写 和 内存管理。 这样做你的属性更容易修改正确，并且更好阅读。(译者注：习惯上修改某个属性的修饰符时，一般从属性名从右向左搜索需要修动的修饰符。最可能从最右边开始修改这些属性的修饰符，根据经验这些修饰符被修改的可能性从高到底应为：内存管理 > 读写权限 >原子操作)
+
+为了完成一个共有的 getter 和一个私有的 setter，你应该声明公开的属性为 `readonly`  并且在类扩展中重新定义通用的属性为 `readwrite` 的。
+
+```objective-c
+//.h文件中
+@interface MyClass : NSObject
+@property (nonatomic, readonly, strong) NSObject *object;
+@end
+//.m文件中
+@interface MyClass ()
+@property (nonatomic, readwrite, strong) NSObject *object;
+@end
+
+@implementation MyClass
+//Do Something cool
+@end
+
+```
+
+私有属性应该定义在类的实现文件的类的扩展 (匿名的 category) 中。不允许在有名字的 category(如 `ZOCPrivate`）中定义私有属性，除非你扩展其他类。
+
+```objective-c
+@interface ZOCViewController ()
+@property (nonatomic, strong) UIView *bannerView;
+@end
+```
+
+### 1.3.6 利用代码块
 
 一个 GCC 非常模糊的特性，以及 Clang 也有的特性是，代码块如果在闭合的圆括号内的话，会返回最后语句的值
 
@@ -586,7 +652,7 @@ NSURL *url = ({
 });
 ```
 
-### 1.3.6 Pragma Mark 
+### 1.3.7 Pragma Mark 
 
 > code organization is a matter of hygiene  (代码组织是卫生问题)
 
@@ -1163,6 +1229,8 @@ if( standard_number< received_number)
 
 但是如果你可以将整个问题和想法滴水不漏地说出来，就可能会发现一些之前没有想到的问题。这样可以不断完善你的思路和设计。
 
+
+
 # 5. 最后想说的
 
 这本书从变量的命名到代码的组织来讲解了一些让代码的可读性提高的一些实践方法。
@@ -1176,9 +1244,9 @@ if( standard_number< received_number)
 如果你连编程里这种最小的事情都不好好做，那你又怎么证明你对编程是有追求的呢？
 
 
-#  其它
+#  6. 其它
 
-##  类名
+##  6.1 类名
 
 类名应该以至少两个大写字母作为前缀。尽管这个规范看起来有些古怪，但是这样做可以减少 Objective-C 没有命名空间所带来的问题。
 
@@ -1186,7 +1254,7 @@ if( standard_number< received_number)
 
 举个例子：如果你有一个 `ZOCNetworkClient` 类，子类的名字会是`ZOCTwitterNetworkClient` (注意 "Twitter" 在 "ZOC" 和 "NetworkClient" 之间); 按照这个约定， 一个`UIViewController` 的子类会是 `ZOCTimelineViewController`.
 
-## Initializer 和 dealloc
+## 6.2 Initializer 和 dealloc
 
 推荐的代码组织方式是将 `dealloc` 方法放在实现文件的最前面，`init` 应该跟在 `dealloc` 方法后面。
 
@@ -1204,7 +1272,7 @@ if( standard_number< received_number)
 }
 ```
 
-### Designated 和 Secondary 初始化方法
+### 6.3 Designated 和 Secondary 初始化方法
 
 Objective-C 有指定初始化方法(designated initializer)和间接(secondary initializer)初始化方法的观念。
 designated 初始化方法是提供所有的参数，secondary 初始化方法是一个或多个，并且提供一个或者更多的默认参数来调用 designated 初始化的初始化方法。
@@ -1238,18 +1306,16 @@ designated 初始化方法是提供所有的参数，secondary 初始化方法�
 
 `initWithTitle:date:location:` 就是 designated 初始化方法，另外的两个是 secondary 初始化方法。因为它们仅仅是调用类实现的 designated 初始化方法
 
-#### Designated Initializer
+#### 6.3.1 Designated Initializer
 
 一个类应该有且只有一个 designated 初始化方法，其他的初始化方法应该调用这个 designated 的初始化方法（虽然这个情况有一个例外）
 
-这个分歧没有要求那个初始化函数需要被调用。
-
-####  Secondary Initializer
+#### 6.3.2 Secondary Initializer
 
 secondary initializer 是一种提供默认值、行为到 designated initializer的方法。也就是说，在这样的方法里面你不应该有初始化实例变量的操作，并且你应该一直假设这个方法不会得到调用。我们保证的是唯一被调用的方法是 designated initializer。
 这意味着你的 secondary initializer 总是应该调用 Designated initializer  或者你自定义(上面的第三种情况：自定义Designated initializer)的 `self`的 designated initializer。有时候，因为错误，可能打成了  `super`，这样会导致不符合上面提及的初始化顺序（在这个特别的例子里面，是跳过当前类的初始化）
 
-### instancetype
+### 6.4 instancetype
 
 我们经常忽略 Cocoa 充满了约定，并且这些约定可以帮助编译器变得更加聪明。无论编译器是否遭遇 `alloc` 或者 `init` 方法，他会知道，即使返回类型都是 `id` ，这些方法总是返回接受到的类类型的实例。因此，它允许编译器进行类型检查。（比如，检查方法返回的类型是否合法）。Clang的这个好处来自于 [related result type](http://clang.llvm.org/docs/LanguageExtensions.html#related-result-types)， 意味着：
 
@@ -1267,9 +1333,9 @@ secondary initializer 是一种提供默认值、行为到 designated initialize
 
 在你的 API 中要构成习惯以及保持始终如一的，此外，通过对你代码的小调整你可以提高可读性：在简单的浏览的时候你可以区分哪些方法是返回你类的实例的。你以后会感谢这些注意过的小细节的。
 
-###  初始化模式
+###  6.5 初始化模式
 
-####  类簇 （class cluster)
+#### 6.5.1 类簇 （class cluster)
 
 类簇在Apple的文档中这样描述：
 
@@ -1309,7 +1375,7 @@ Class clusters 在 Apple 的Framework 中广泛使用：一些明显的例子比
 @end
 ```
 
-####   单例
+####  6.5.3 单例
 
 如果可能，请尽量避免使用单例而是依赖注入。然而，如果一定要用，请使用一个线程安全的模式来创建共享的实例。对于 GCD，用 `dispatch_once()` 函数就可以咯。
 
@@ -1330,86 +1396,8 @@ Class clusters 在 Apple 的Framework 中广泛使用：一些明显的例子比
 
 > NOTE：单例模式应该运用于类及类的接口趋向于作为单例来使用的情况 
 
-##  属性
 
-属性应该尽可能描述性地命名，避免缩写，并且是小写字母开头的驼峰命名。我们的工具可以很方便地帮我们自动补全所有东西。所以没理由少打几个字符了，并且最好尽可能在你源码里表达更多东西。
-
-```objective-c
-NSString *text;
-```
-
-不要这样 :
-```objective-c
-NSString* text;
-NSString * text;
-```
-
-（注意：这个习惯和常量不同，这是主要从常用和可读性考虑。 C++ 的开发者偏好从变量名中分离类型，作为类型它应该是
-`NSString*` （对于从堆中分配的对象，对于C++是能从栈上分配的）格式。）
-
-### 点符号
-
-当使用 setter getter 方法的时候尽量使用点符号。应该总是用点符号来访问以及设置属性。
-
-```Objective-C
-view.backgroundColor = [UIColor orangeColor];
-[UIApplication sharedApplication].delegate;
-
-```
-
-不要这样:
-```Objective-C
-[view setBackgroundColor:[UIColor orangeColor]];
-UIApplication.sharedApplication.delegate;
-```
-
-使用点符号会让表达更加清晰并且帮助区分属性访问和方法调用
-
-### 属性定义
-
-推荐按照下面的格式来定义属性
-
-```objective-c
-@property (nonatomic, readwrite, copy) NSString *name;
-```
-
-属性的参数应该按照下面的顺序排列： 原子性，读写 和 内存管理。 这样做你的属性更容易修改正确，并且更好阅读。(译者注：习惯上修改某个属性的修饰符时，一般从属性名从右向左搜索需要修动的修饰符。最可能从最右边开始修改这些属性的修饰符，根据经验这些修饰符被修改的可能性从高到底应为：内存管理 > 读写权限 >原子操作)
-
-
-你必须使用 `nonatomic`，除非特别需要的情况。在iOS中，`atomic`带来的锁特别影响性能。
-
-属性可以存储一个代码块。为了让它存活到定义的块的结束，必须使用 `copy` （block 最早在栈里面创建，使用 `copy`让 block 拷贝到堆里面去）
-
-
-为了完成一个共有的 getter 和一个私有的 setter，你应该声明公开的属性为 `readonly`  并且在类扩展中重新定义通用的属性为 `readwrite` 的。
-
-```objective-c
-//.h文件中
-@interface MyClass : NSObject
-@property (nonatomic, readonly, strong) NSObject *object;
-@end
-//.m文件中
-@interface MyClass ()
-@property (nonatomic, readwrite, strong) NSObject *object;
-@end
-
-@implementation MyClass
-//Do Something cool
-@end
-
-```
-
-### 私有属性
-
-私有属性应该定义在类的实现文件的类的扩展 (匿名的 category) 中。不允许在有名字的 category(如 `ZOCPrivate`）中定义私有属性，除非你扩展其他类。
-
-```objective-c
-@interface ZOCViewController ()
-@property (nonatomic, strong) UIView *bannerView;
-@end
-```
-
-### 可变对象
+### 6.7 可变对象
 
 任何可以用一个可变的对象设置的（(比如 `NSString`,`NSArray`,`NSURLRequest`)）属性的内存管理类型必须是 `copy` 的。
 
@@ -1427,7 +1415,7 @@ UIApplication.sharedApplication.delegate;
 }
 ```
 
-### 懒加载（Lazy Loading）
+### 6.8 懒加载（Lazy Loading）
 
 当实例化一个对象需要耗费很多资源，或者配置一次就要调用很多配置相关的方法而你又不想弄乱这些方法时，我们需要重写 getter 方法以延迟实例化，而不是在 init 方法里给对象分配内存。通常这种操作使用下面这样的模板：
 
@@ -1444,15 +1432,7 @@ UIApplication.sharedApplication.delegate;
 
 ```
 
-即使这样做在某些情况下很不错，但是在实际这样做之前应当深思熟虑。事实上，这样的做法是可以避免的。下面是使用延迟实例化的争议。
-
-* getter 方法应该避免副作用。看到 getter 方法的时候，你不会想到会因此创建一个对象或导致副作用，实际上如果调用 getter 方法而不使用其返回值编译器会报警告 “Getter 不应该仅因它产生的副作用而被调用”。
-
-> 副作用指当调用函数时，除了返回函数值之外，还对主调用函数产生附加的影响。例如修改全局变量（函数外的变量）或修改参数。函数副作用会给程序设计带来不必要的麻烦，给程序带来十分难以查找的错误，并且降低程序的可读性。（译者注）
-
-* 你在第一次访问的时候改变了初始化的消耗，产生了副作用，这会让优化性能变得困难（以及测试）
-* 这个初始化可能是不确定的：比如你期望属性第一次被一个方法访问，但是你改变了类的实现，访问器在你预期之前就得到了调用，这样可以导致问题，特别是初始化逻辑可能依赖于类的其他不同状态的时候。总的来说最好明确依赖关系。
-* 这个行为不是 KVO 友好的。如果 getter 改变了引用，他应该通过一个  KVO 通知来通知改变。当访问 getter 的时候收到一个改变的通知很奇怪。
+即使这样做在某些情况下很不错，但是在实际这样做之前应当深思熟虑。事实上，这样的做法是可以避免的。
 
 ##  方法
 
@@ -1469,8 +1449,6 @@ UIApplication.sharedApplication.delegate;
 虽然我们知道这样写很丑, 但是我们应该要在我们的 category 方法前加上自己的小写前缀以及下划线，比如`- (id)zoc_myCategoryMethod`。
 
 这是非常必要的。因为如果在扩展的 category 或者其他 category 里面已经使用了同样的方法名，会导致不可预计的后果。实际上，**实际被调用的是最后被加载的那个 category 中方法的实现**(译者注：如果导入的多个 category 中有一些同名的方法导入到类里时，最终调用哪个是由编译时的加载顺序来决定的，最后一个加载进来的方法会覆盖之前的方法)。
-
-如果想要确认你的分类方法没有覆盖其他实现的话，可以把环境变量 OBJC_PRINT_REPLACED_METHODS 设置为 YES，这样那些被取代的方法名字会打印到 Console 中。现在 LLVM 5.1  不会为此发出任何警告和错误提示，所以自己小心不要在分类中重载方法。
 
 一个好的实践是在 category 名中使用前缀。
 
@@ -1499,94 +1477,4 @@ UIApplication.sharedApplication.delegate;
 + (instancetype)dateWithTimeInterval:(NSTimeInterval)secsToBeAdded sinceDate:(NSDate *)date;
 // ...
 @end
-```
-
-
-# 对象间的通讯
-
-对象之间需要通信，这也是所有软件的基础。再非凡的软件也需要通过对象通信来完成复杂的目标。本章将深入讨论一些设计概念，以及如何依据这些概念来设计出良好的架构。
-
-## Block
-
-Block 是 Objective-C 版本的 lambda 或者 closure（闭包）。
-
-使用 block 定义异步接口:
-
-```objective-c
-- (void)downloadObjectsAtPath:(NSString *)path
-                   completion:(void(^)(NSArray *objects, NSError *error))completion;
-```
-
-当你定义一个类似上面的接口的时候，尽量使用一个单独的 block 作为接口的最后一个参数。把需要提供的数据和错误信息整合到一个单独 block 中，比分别提供成功和失败的 block 要好。
-
-以下是你应该这样做的原因：
-
-* 通常这成功处理和失败处理会共享一些代码（比如让一个进度条或者提示消失）；
-* Apple 也是这样做的，与平台一致能够带来一些潜在的好处；
-* block 通常会有多行代码，如果不作为最后一个参数放在后面的话，会打破调用点；
-* 使用多个 block 作为参数可能会让调用看起来显得很笨拙，并且增加了复杂性。
-
-看上面的方法，完成处理的 block 的参数很常见：第一个参数是调用者希望获取的数据，第二个是错误相关的信息。这里需要遵循以下两点：
-
-* 若 `objects` 不为 nil，则 `error` 必须为 nil
-* 若 `objects` 为 nil，则 `error` 必须不为 nil
-
-因为调用者更关心的是实际的数据，就像这样：
-
-```objective-c
-- (void)downloadObjectsAtPath:(NSString *)path
-                   completion:(void(^)(NSArray *objects, NSError *error))completion {
-    if (objects) {
-        // do something with the data
-    }
-    else {
-        // some error occurred, 'error' variable should not be nil by contract
-    }
-}
-```
-
-此外，Apple 提供的一些同步接口在成功状态下向 error 参数（如果非 NULL) 写入了垃圾值，所以检查 error 的值可能出现问题。
-
-###  self 的循环引用
-
-```objective-c
-__weak __typeof(self) weakSelf = self;
-[self executeBlock:^(NSData *data, NSError *error) {
-    [weakSelf doSomethingWithData:data];
-}];
-```
-
-不要这样:
-```objective-c
-[self executeBlock:^(NSData *data, NSError *error) {
-    [self doSomethingWithData:data];
-}];
-```
-
-多个语句的例子:
-```objective-c
-__weak __typeof(self)weakSelf = self;
-[self executeBlock:^(NSData *data, NSError *error) {
-    __strong __typeof(weakSelf) strongSelf = weakSelf;
-    if (strongSelf) {
-        [strongSelf doSomethingWithData:data];
-        [strongSelf doSomethingWithData:data];
-    }
-}];
-```
-
-不要这样:
-```objective-c
-__weak __typeof(self)weakSelf = self;
-[self executeBlock:^(NSData *data, NSError *error) {
-    [weakSelf doSomethingWithData:data];
-    [weakSelf doSomethingWithData:data];
-}];
-```
-
-你应该把这两行代码作为 snippet 加到 Xcode 里面并且总是这样使用它们。
-
-```objective-c
-__weak __typeof(self)weakSelf = self;
-__strong __typeof(weakSelf)strongSelf = weakSelf;
 ```
