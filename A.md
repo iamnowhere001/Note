@@ -1,8 +1,6 @@
 
 # 0. 写在前面的话
 
-很多同行在编写代码的时候往往只关注一些宏观上的主题：架构，设计模式，数据结构等等，却忽视了一些更细节上的点：比如变量如何命名与使用，控制流的设计，以及注释的写法等等。以上这些细节上的东西可以用**代码的可读性**来概括。
-
 不同于宏观上的架构，设计模式等需要好几个类，好几个模块才能看出来：代码的可读性是**能够立刻从微观上的，一个变量的命名，函数的逻辑划分，注释的信息质量里面看出来的。**
 
 宏观层面上的东西固然重要，但是代码的可读性也属于评价代码质量的一个无法让人忽视的指标：它影响了阅读代码的成本（毕竟代码是给人看的），甚至会影响代码出错的概率！
@@ -47,10 +45,9 @@
 ### 1.1.1 选择专业的词汇，避免泛泛的名字
 
 一个比较常见的反例：`get` 。`get`这个词最好是用来做轻量级的取方法的开头，而如果用到其他的地方就会显得很不专业。
-
 `getPage(url)` 通过这个方法名很难判断出这个方法是从缓存中获取页面数据还是从网页中获取。如果是从网页中获取，更专业的词应该是`fetchPage(url)`或者`downloadPage(url)`。
 
-还有一个比较常见的反例：`returnValue`和`retval`。这两者都是“返回值”的意思，他们被滥用在各个有返回值的函数里面。其实这两个次除了携带他们本来的意思`返回值`以外并不具备任何其他的信息，是典型的泛泛的名字。
+还有一个比较常见的反例：`returnValue`和`retval`。这两者都是“返回值”的意思，他们被滥用在各个有返回值的函数里面。其实这两者除了携带他们本来的意思`返回值`以外并不具备任何其他的信息，是典型的泛泛的名字。
 
 那么如何选择一个专业的词汇呢？答案是在非常贴近你自己的意图的基础上，选择一个富有表现力的词汇。
 
@@ -140,7 +137,7 @@ UILabel *title
 UITextField *PwdTF
 ```
 
-方法名与方法类型 (`-`/`+` 符号)之间应该以空格间隔。方法段之间也应该以空格间隔（以符合 Apple 风格）。参数前应该总是有一个描述性的关键词。尽可能少用 "and" 这个词。它不应该用来阐明有多个参数，比如下面的 `initWithWidth:height:` 这个例子：
+**方法名与方法类型 (`-`/`+` 符号)之间应该以空格间隔。方法段之间也应该以空格间隔（以符合 Apple 风格）。参数前应该总是有一个描述性的关键词。尽可能少用 "and" 这个词。它不应该用来阐明有多个参数，比如下面的 `initWithWidth:height:` 这个例子：**
 
 推荐:
 ```objective-c
@@ -163,7 +160,7 @@ UITextField *PwdTF
 
 ```objective-c
 NSArray *names = @[@"Brian", @"Matt", @"Chris", @"Alex", @"Steve", @"Paul"];
-NSDictionary *productManagers = @{@"iPhone" : @"Kate", @"iPad" : @"Kamal", @"Mobile Web" : @"Bill"};
+NSDictionary *productManagers = @{@"iPhone" : @"Kate", @"iPad" : @"Kamal"};
 NSNumber *shouldUseLiterals = @YES;
 NSNumber *buildingZIPCode = @10018;
 ```
@@ -171,7 +168,7 @@ NSNumber *buildingZIPCode = @10018;
 不要这样:
 ```objective-c
 NSArray *names = [NSArray arrayWithObjects:@"Brian", @"Matt", @"Chris", @"Alex", @"Steve", @"Paul", nil];
-NSDictionary *productManagers = [NSDictionary dictionaryWithObjectsAndKeys: @"Kate", @"iPhone", @"Kamal", @"iPad", @"Bill", @"Mobile Web", nil];
+NSDictionary *productManagers = [NSDictionary dictionaryWithObjectsAndKeys: @"Kate", @"iPhone", @"Kamal", @"iPad", nil];
 NSNumber *shouldUseLiterals = [NSNumber numberWithBool:YES];
 NSNumber *buildingZIPCode = [NSNumber numberWithInteger:10018];
 ```
@@ -187,7 +184,7 @@ NSNumber *buildingZIPCode = [NSNumber numberWithInteger:10018];
 
 **为变量添加重要属性**
 
-有些变量是具有一些非常重要的属性，其重要程度是不允许使用者忽略的。例如：
+有些变量是具有一些非常重要的属性，其重要程度是不允许使用者忽略的：
 
 * 一个UTF-8格式的`html`字节，相对于`html`，`html_utf8`更加清楚地描述了这个变量的格式。
 * 一个纯文本，需要加密的密码字符串：相对于`password`，`plaintext_password`更清楚地描述了这个变量的特点。
@@ -205,7 +202,6 @@ NSNumber *buildingZIPCode = [NSNumber numberWithInteger:10018];
 ### 1.1.3 决定名字最适合的长度
 
 **如果变量的作用域很小，可以取很短的名字**
-
 ```swift
 if(debug){
     map <string,int>m;
@@ -226,7 +222,6 @@ Print(m);
 我们知道驼峰命名可以很清晰地体现变量的含义，但是当驼峰命名中的单元超过了3个之后，就会很影响阅读体验:
 
 `userFriendsInfoModel`
-
 `memoryCacheCalculateTool`
 
 **丢掉不必要的单元**
@@ -238,7 +233,6 @@ Print(m);
 **不能使用大家不熟悉的缩写**
 
 有些缩写是大家熟知的：
-
 * `doc` 可以代替`document`
 * `str` 可以代替`string`
 
@@ -249,7 +243,6 @@ Print(m);
 **名字不能引起歧义**
 
 有些名字会引起歧义，例如：
-
 * filter：过滤这个词，可以是过滤出符合标准的，也可以是减少不符合标准的：是两种完全相反的结果，所以不推荐使用。
 * clip：类似的，到底是在原来的基础上截掉某一段还是另外截出来某一段呢？同样也不推荐使用。
 * 布尔值：read_password:是表达需要读取密码，还是已经读了密码呢？所以最好使用`need_password`或者`is_authenticated`来代替比较好。通常来说，给布尔值的变量加上`is`,`has,can`,`should`这样的词可以使布尔值表达的意思更加明确
@@ -266,8 +259,6 @@ Print(m);
 相对的，对于变量的声明与使用，我们可以从这四个角度来提高代码的可读性：
 
 ### 1.2.1 减少变量的个数
-
-在一个函数里面可能会声明很多变量，但是有些变量的声明是毫无意义的，比如：
 
 **没有价值的临时变量**
 
@@ -288,7 +279,7 @@ root_message.last_view_time = now
 
 **表示中间结果的变量**
 
-有的时候为了达成一个目标，把一件事情分成了两件事情来做，这两件事情中间需要一个变量来传递结果。但往往这件事情不需要分成两件事情来做，这个“中间结果”也就不需要了：
+有的时候为了达成一个目标，把一件事情分成了两件事情来做，这两件事情中间需要一个变量来传递结果。但往往这件事情不需要分成两件事情来做，这个“中间结果”也就不需要了。
 
 所以在写代码的时候，如果可以“速战速决”，就尽量使用最快，最简洁的方式来实现目的。
 
@@ -338,7 +329,6 @@ class LargeCass{
 ### 1.2.5 如何简化表达式
 
 **使用解释变量**
-
 有些变量会从一个比较长的算式得出，这个表达式可能很难让人看懂。这时候就需要用一个简短的“解释”变量来诠释算式的含义。使用书中的一个例子：
 
 `if line.split(':')[0].strip() == "root"`
@@ -349,7 +339,6 @@ if username == "root"
 ```
 
 **使用总结变量**
-
 除了以“变量”替换“算式”，还可以用“变量”来替换含有更多变量更复杂的内容，比如条件语句，这时候该变量可以被称为"总结变量"。使用书中的一个例子：
 ```objective-c
 if(request.user.id == document.owner_id){
@@ -365,7 +354,6 @@ if (user_owns_document){
 ```
 
 **使用德摩根定理**
-
 1. `not(a or b or c)`等价于`(not a) and (not b) and (not c)`
 2. `not(a and b and c)`等价于`(not a) or (not b) or (not c)`
 当我们条件语句里面存在外部取反的情况，就可以使用德摩根定理来做个转换。使用书中的一个例子：
@@ -478,7 +466,7 @@ NSString *address = userInfo[@"address"];
 ```
 而如果使用了列对齐的方法，让等号以及右侧的部分对齐的方式会使代码看上去更加整洁：
 
-````
+````objective-c
 NSString *name    = userInfo[@"name"];
 NSString *sex     = userInfo[@"sex"];
 NSString *address = userInfo[@"address"];
@@ -489,7 +477,6 @@ NSString *address = userInfo[@"address"];
 ### 1.3.4 选择一个有意义的顺序
 
 当涉及到相同变量（属性）组合的存取都存在的时候，最好以一个有意义的顺序来排列它们：
-
 * 让变量的顺序与对应的HTML表单中<input>字段的顺序相匹配
 * 从最重要到最不重要排序
 * 按照字母排序
@@ -509,7 +496,6 @@ nameLabel.text    = model.name;
 sexLabel.text     = model.sex;
 addressLabel.text = model.address;
 
-
 ```
 
 ### 1.3.4 把代码分成"段落"
@@ -521,7 +507,6 @@ addressLabel.text = model.address;
 其实这些道理同样适用于写代码：如果你可以把一个拥有好几个步骤的大段函数，以空行+注释的方法将每一个步骤区分开来，那么则会对读者理解该函数的功能有极大的帮助。这样一来，代码既能有一定的美感，也具备了可读性。其实可读性又何尝不是来自于规则，富有美感的代码呢？
 ```objective-c
 BigFunction {
-  
      //step1:*****
      ....
        
@@ -530,7 +515,6 @@ BigFunction {
         
      //step3:*****
      ....
-  
 }
 ```
 
@@ -561,14 +545,14 @@ if(condition)
 * 类的实现
 * 方法的实现
 
-
 属性应该尽可能描述性地命名，避免缩写，并且是小写字母开头的驼峰命名。我们的工具可以很方便地帮我们自动补全所有东西。所以没理由少打几个字符了，并且最好尽可能在你源码里表达更多东西。
 
+推荐
 ```objective-c
 NSString *text;
 ```
 
-不要这样 :
+推荐 :
 ```objective-c
 NSString* text;
 NSString * text;
@@ -579,13 +563,14 @@ NSString * text;
 
 当使用 setter getter 方法的时候尽量使用点符号。应该总是用点符号来访问以及设置属性。
 
+推荐：
 ```Objective-C
 view.backgroundColor = [UIColor orangeColor];
 [UIApplication sharedApplication].delegate;
 
 ```
 
-不要这样:
+不推荐:
 ```Objective-C
 [view setBackgroundColor:[UIColor orangeColor]];
 UIApplication.sharedApplication.delegate;
@@ -608,6 +593,7 @@ UIApplication.sharedApplication.delegate;
 @interface MyClass : NSObject
 @property (nonatomic, readonly, strong) NSObject *object;
 @end
+
 //.m文件中
 @interface MyClass ()
 @property (nonatomic, readwrite, strong) NSObject *object;
@@ -695,31 +681,23 @@ NSURL *url = ({
 上面的标记能明显分离和组织代码。你还可以用  cmd+Click 来快速跳转到符号定义地方。
 但是小心，即使 paragma mark 是一门手艺，但是它不是让你类里面方法数量增加的一个理由：类里面有太多方法说明类做了太多事情，需要考虑重构了。
 
+
 # 2. 如何写注释
 
-> 注释的目的是尽量帮助读者了解得和作者一样多。
-在你写代码的时候，在脑海中可能会留下一些代码里面很难体现出来的部分：这些部分在别人读你的代码的时候可能很难体会到。而这些“不对称”的信息就是需要通过以注释的方式来告诉阅读代码的人。
-
-想要写出好的注释，就需要首先知道：
-
-* 什么不能作为注释
-* 什么应该作为注释
+> 注释的目的是尽量帮助读者了解得和作者一样多。在你写代码的时候，在脑海中可能会留下一些代码里面很难体现出来的部分：这些部分在别人读你的代码的时候可能很难体会到。而这些“不对称”的信息就是需要通过以注释的方式来告诉阅读代码的人。
 
 ## 2.1 什么不能作为注释
 
 我们都知道注释占用了代码的空间，而且实际上对程序本身的运行毫无帮助，所以最好保证它是物有所值的。不幸的是，有一些注释是毫无价值的，它无情的占用了代码间的空间，影响了阅读代码的人的阅读效率，也浪费了写注释的人的时间。这样的注释有以下两种：
 
-* 描述能立刻从代码自身就能立刻理解的代码意图的注释
-* 给不好的命名添加的注释
-
-### 2.1.1 描述能立刻从代码自身就能立刻理解的代码意图的注释
+**描述能立刻从代码自身就能立刻理解的代码意图的注释**
 ```objective-c
 //add params1 and params2 and return sum of them
 - (int)addParam1:(int)param1 param2:(int)param2
 ```
 上面这个例子举的比较简单，但反映的问题很明显：这里面的注释是完全不需要的，它的存在反而增加了阅读代码的人的工作量。因为他从方法名就可以马上意会到这个函数的作用了。
 
-### 2.1.2 给不好的命名添加的注释
+**给不好的命名添加的注释**
 ```objective-c
 - (void)
 ```
@@ -794,7 +772,8 @@ NSString *const kLogoutNotification = @"LogoutNotification";
 // 更新用户信息
 NSString *const kUpdateUserInfoNotification = @"UpdateUserInfoNotification";
 ```
-### 2.3.1 通知
+
+**NSNotification**
 当你定义你自己的 `NSNotification` 的时候你应该把你的通知的名字定义为一个字符串常量，就像你暴露给其他类的其他字符串常量一样。你应该在公开的接口文件中将其声明为 `extern` 的， 并且在对应的实现文件里面定义。
 
 ```objective-c
@@ -833,7 +812,6 @@ NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotificati
 其实好的代码是自解释的，由于其命名的合理以及架构的清晰，几乎不需要注释来向阅读代码的人添加额外的信息，书中有一个公式可以很形象地表明一个好的代码本身的重要性：
 
 > 好代码 > (坏代码 + 注释)
-
 
 所有重要的方法，接口，分类以及协议定义应该有伴随的注释来解释它们的用途以及如何使用。更多的例子可以看 Google 代码风格指南中的 [File and Declaration Comments](http://google-styleguide.googlecode.com/svn/trunk/objcguide.xml#File_Comments)。
 
@@ -891,12 +869,6 @@ NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotificati
 # 3. 控制流和逻辑的改进
 > 控制流在编码中占据着很重要的位置，它往往代表着一些核心逻辑和算法。因此，如果我们可以让控制流变得看上去更加“自然”，那么就会对阅读代码的人理解这些逻辑甚至是整个系统提供很大的帮助。
 
-那么都有哪相关实践呢？
-
-* 使用符合人类自然语言的表达习惯
-* if/else语句块的顺序
-* 使用return提前返回
-
 ## 3.1 条件语句
 
 条件语句体应该总是被大括号包围。尽管有时候你可以不使用大括号（比如，条件语句体只有一行内容），但是这样做会带来问题隐患。比如，增加一行代码时，你可能会误以为它是 if 语句体里面的。此外，更危险的是，如果把 if 后面的那行代码注释掉，之后的一行代码会成为 if 语句里的代码。
@@ -919,22 +891,14 @@ if (!error) return success;
 
 此外，在其他条件语句里面也应该按照这种风格统一，这样更便于检查。
 
-### 3.1.1 尤达表达式
+**尤达表达式**
 
 不要使用尤达表达式。尤达表达式是指，拿一个常量去和变量比较而不是拿变量去和常量比较。它就像是在表达 “蓝色是不是天空的颜色” 或者 “高个是不是这个男人的属性” 而不是  “天空是不是蓝的” 或者 “这个男人是不是高个子的”
 
 推荐:
 ```objective-c
 if ([myValue isEqual:@42]) { ...
-```
 
-不推荐:
-```objective-c
-if ([@42 isEqual:myValue]) { ...
-```
-
-推荐:
-```objective-c
 if (someObject) { ...
 if (![someObject boolValue]) { ...
 if (!someObject) { ...
@@ -942,13 +906,15 @@ if (!someObject) { ...
 
 不推荐:
 ```objective-c
+if ([@42 isEqual:myValue]) { ...
+
 if (someObject == YES) { ... // Wrong
 if (myRawValue == YES) { ... // Never do this.
 if ([someObject boolValue] == NO) { ...
 ```
 同时这样也能提高一致性，以及提升可读性。
 
-### 3.1.2 黄金大道
+**黄金大道**
 
 在使用条件语句编程时，代码的左边距应该是一条“黄金”或者“快乐”的大道。 也就是说，不要嵌套 `if` 语句。使用多个 return 可以避免增加循环的复杂度，并提高代码的可读性。因为方法的重要部分没有嵌套在分支里面，并且你可以很清楚地找到相关的代码。
 
@@ -971,7 +937,7 @@ if ([someObject boolValue] == NO) { ...
 }
 ```
 
-### 3.1.3 三元运算符
+**三元运算符**
 
 三元运算符 ? 应该只用在它能让代码更加清楚的地方。 一个条件语句的所有的变量应该是已经被求值了的。类似 if 语句，计算多个条件子句通常会让语句更加难以理解。或者可以把它们重构到实例变量里面。
 
@@ -997,7 +963,7 @@ result = object ? : [self createObject];
 result = object ? object : [self createObject];
 ```
 
-### 3.1.4 Case语句
+**Case语句**
 
 除非编译器强制要求，括号在 case 语句里面是不必要的。但是当一个 case 包含了多行语句的时候，需要加上括号。
 
@@ -1054,7 +1020,7 @@ switch (menuType) {
 
 `Enumeration value 'ZOCEnumValue3' not handled in switch.（枚举类型 'ZOCEnumValue3' 没有被 switch 处理）`
 
-### 3.1.5 枚举类型
+**枚举类型**
 
 当使用 `enum` 的时候，建议使用新的固定的基础类型定义，因为它有更强大的类型检查和代码补全。 SDK 现在有一个 宏来鼓励和促进使用固定类型定义 - `NS_ENUM()`
 
