@@ -58,10 +58,6 @@ UITextField *PwdF
 推荐:
 ```objective-c
 static const NSTimeInterval ZOCSignInViewControllerFadeOutAnimationDuration = 0.4;
-```
-
-推荐:
-```objective-c
 static NSString * const ZOCCacheControllerDidClearCacheNotification = @"ZOCCacheControllerDidClearCacheNotification";
 static const CGFloat ZOCImageThumbnailHeight = 50.0f;
 ```
@@ -94,6 +90,22 @@ NSString *const kLoginSuccessNotification = @"LoginSuccessNotification";
 NSString *const kLogoutNotification = @"LogoutNotification";
 // 更新用户信息
 NSString *const kUpdateUserInfoNotification = @"UpdateUserInfoNotification";
+```
+
+### NSNotification
+
+当你定义你自己的 `NSNotification` 的时候你应该把你的通知的名字定义为一个字符串常量，就像你暴露给其他类的其他字符串常量一样。你应该在公开的接口文件中将其声明为 `extern` 的， 并且在对应的实现文件里面定义。
+
+因为你在头文件中暴露了符号，所以你应该按照统一的命名空间前缀法则，用类名前缀作为这个通知名字的前缀。
+
+同时，用一个 Did/Will 这样的动词以及用 "Notifications" 后缀来命名这个通知也是一个好的实践。
+
+```objective-c
+// Foo.h
+extern NSString * const ZOCFooDidBecomeBarNotification
+
+// Foo.m
+NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotification";
 ```
 
 ###  方法
@@ -498,8 +510,8 @@ if(!file_exists || is_protected){}
 
 使用换行：
 ```objective-c
-- (void)requestWithUrl:(NSString*)url 
-                method:(NSString*)method 
+- (void)requestWithUrl:(NSString *)url 
+                method:(NSString *)method 
                 params:(NSDictionary *)params 
                success:(SuccessBlock)success 
                failure:(FailuireBlock)failure{
@@ -1149,10 +1161,8 @@ secondary initializer 是一种提供默认值、行为到 designated initialize
 
 虽然如此，根据 clang 的定义，`id` 可以被编译器提升到 `instancetype` 。在 `alloc` 或者 `init` 中，我们强烈建议对所有返回类的实例的类方法和实例方法使用 `instancetype` 类型。
 
-
 在你的 API 中要构成习惯以及保持始终如一的，此外，通过对你代码的小调整你可以提高可读性：在简单的浏览的时候你可以区分哪些方法是返回你类的实例的。你以后会感谢这些注意过的小细节的。
 
--------------------
 
 ###  初始化模式
 
@@ -1358,9 +1368,9 @@ UIApplication.sharedApplication.delegate;
 
 # Categories
 
-虽然我们知道这样写很丑, 但是我们应该要在我们的 category 方法前加上自己的小写前缀以及下划线，比如`- (id)zoc_myCategoryMethod`。 这种实践同样[被苹果推荐](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/ProgrammingWithObjectiveC/CustomizingExistingClasses/CustomizingExistingClasses.html#//apple_ref/doc/uid/TP40011210-CH6-SW4)。
+虽然我们知道这样写很丑, 但是我们应该要在我们的 category 方法前加上自己的小写前缀以及下划线，比如`- (id)zoc_myCategoryMethod`。
 
-这是非常必要的。因为如果在扩展的 category 或者其他 category 里面已经使用了同样的方法名，会导致不可预计的后果。实际上，实际被调用的是最后被加载的那个 category 中方法的实现(译者注：如果导入的多个 category 中有一些同名的方法导入到类里时，最终调用哪个是由编译时的加载顺序来决定的，最后一个加载进来的方法会覆盖之前的方法)。
+这是非常必要的。因为如果在扩展的 category 或者其他 category 里面已经使用了同样的方法名，会导致不可预计的后果。实际上，**实际被调用的是最后被加载的那个 category 中方法的实现**(译者注：如果导入的多个 category 中有一些同名的方法导入到类里时，最终调用哪个是由编译时的加载顺序来决定的，最后一个加载进来的方法会覆盖之前的方法)。
 
 如果想要确认你的分类方法没有覆盖其他实现的话，可以把环境变量 OBJC_PRINT_REPLACED_METHODS 设置为 YES，这样那些被取代的方法名字会打印到 Console 中。现在 LLVM 5.1  不会为此发出任何警告和错误提示，所以自己小心不要在分类中重载方法。
 
@@ -1372,13 +1382,6 @@ UIApplication.sharedApplication.delegate;
 @end
 ```
 
-不要这样
-```objective-c
-@interface NSDate (ZOCTimeExtensions)
-- (NSString *)timeAgoShort;
-@end
-```
-
 分类可以用来在头文件中定义一组功能相似的方法。这是在 Apple的 Framework 也很常见的一个实践（下面例子的取自`NSDate` 头文件）。我们也强烈建议在自己的代码中这样使用。
 
 我们的经验是，创建一组分类对以后的重构十分有帮助。一个类的接口增加的时候，可能意味着你的类做了太多事情，违背了类的单一功能原则。
@@ -1387,13 +1390,10 @@ UIApplication.sharedApplication.delegate;
 
 ```objective-c
 @interface NSDate : NSObject <NSCopying, NSSecureCoding>
-
 @property (readonly) NSTimeInterval timeIntervalSinceReferenceDate;
-
 @end
 
 @interface NSDate (NSDateCreation)
-
 + (instancetype)date;
 + (instancetype)dateWithTimeIntervalSinceNow:(NSTimeInterval)secs;
 + (instancetype)dateWithTimeIntervalSinceReferenceDate:(NSTimeInterval)ti;
@@ -1401,26 +1401,6 @@ UIApplication.sharedApplication.delegate;
 + (instancetype)dateWithTimeInterval:(NSTimeInterval)secsToBeAdded sinceDate:(NSDate *)date;
 // ...
 @end
-```
-
-#  Protocols
-
-在 Objective-C 的世界里面经常错过的一个东西是抽象接口。接口（interface）这个词通常指一个类的 `.h` 文件，但是它在 Java 程序员眼里有另外的含义： 一系列不依赖具体实现的方法的定义。(译者注：在OC中，类的接口对应在.m文件中都会有具体的实现，但Java中接口更接近于OC中的抽象接口或者说协议(protocol))
-
-# NSNotification
-
-当你定义你自己的 `NSNotification` 的时候你应该把你的通知的名字定义为一个字符串常量，就像你暴露给其他类的其他字符串常量一样。你应该在公开的接口文件中将其声明为 `extern` 的， 并且在对应的实现文件里面定义。
-
-因为你在头文件中暴露了符号，所以你应该按照统一的命名空间前缀法则，用类名前缀作为这个通知名字的前缀。
-
-同时，用一个 Did/Will 这样的动词以及用 "Notifications" 后缀来命名这个通知也是一个好的实践。
-
-```objective-c
-// Foo.h
-extern NSString * const ZOCFooDidBecomeBarNotification
-
-// Foo.m
-NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotification";
 ```
 
 
@@ -1618,7 +1598,7 @@ NSURL *url = ({
 
 一个类的文档应该只在 .h 文件里用 Doxygen/AppleDoc 的语法书写。 方法和属性都应该提供文档。
 
-**例子: **
+例子: 
 
 ```objective-c
 /**
@@ -1774,10 +1754,8 @@ __strong __typeof(weakSelf)strongSelf = weakSelf;
 @end
 
 @interface ZOCSignUpViewController : UIViewController
-
 @property (nonatomic, weak) id<ZOCSignUpViewControllerDelegate> delegate;
 @property (nonatomic, weak) id<ZOCSignUpViewControllerDataSource> dataSource;
-
 @end
 
 ```
@@ -1805,4 +1783,3 @@ if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSign
     [self.delegate signUpViewControllerDidPressSignUpButton:self];
 }
 ```
-
