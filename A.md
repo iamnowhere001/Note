@@ -193,7 +193,6 @@ Print(m);
 * 布尔值：`read_password`:是表达需要读取密码，还是已经读了密码呢？所以最好使用`need_password`或者`is_authenticated`来代替比较好。通常来说，给布尔值的变量加上`is`,`has,can`,`should`这样的词可以使布尔值表达的意思更加明确
 
 有一个很简单的原则来判断这个变量名起的是否是好的：那就是：**团队的新成员是否能迅速理解这个变量名的含义。**如果是，那么这个命名就是成功的，否则就不要偷懒了，起个好名字，对谁都好。其实如果你养成习惯多花几秒钟想出个好名字，你会发现你的“命名能力”会很快提升。
-------
 
 ## 1.2 如何声明与使用变量
 
@@ -511,9 +510,7 @@ if(condition)
 
 ## 2.1 什么不能作为注释
 
-我们都知道注释占用了代码的空间，而且实际上对程序本身的运行毫无帮助，所以最好保证它是物有所值的。
-
-不幸的是，有一些注释是毫无价值的，它无情的占用了代码间的空间，影响了阅读代码的人的阅读效率，也浪费了写注释的人的时间。这样的注释有以下两种：
+我们都知道注释占用了代码的空间，而且实际上对程序本身的运行毫无帮助，所以最好保证它是物有所值的。不幸的是，有一些注释是毫无价值的，它无情的占用了代码间的空间，影响了阅读代码的人的阅读效率，也浪费了写注释的人的时间。这样的注释有以下两种：
 
 * 描述能立刻从代码自身就能立刻理解的代码意图的注释
 * 给不好的命名添加的注释
@@ -529,7 +526,6 @@ if(condition)
 ```objective-c
 - (void)
 ```
-讲完了注释不应该是什么内容，现在讲一下注释应该是什么样的内容：
 
 ## 2.2 什么应该作为注释
 
@@ -668,45 +664,43 @@ if( standard_number< received_number)
 再举一个JSONModel里的例子，在initWithDictionary:error方法里面就有很多return操作，它们都体现出了“在什么情况下是不能成功将字典转化为model对象”的；而且在方法的最后返回了对象，说明如果到了这一步，则在转化的过程中通过了层层考验：
 
 ```objective-c
--(id)initWithDictionary:(NSDictionary*)dict error:(NSError**)err
-{
-    //check for nil input
+-(id)initWithDictionary:(NSDictionary*)dict error:(NSError**)err {
+    // check for nil input
     if (!dict) {
         if (err) *err = [JSONModelError errorInputIsNil];
         return nil;
     }
 
-    //invalid input, just create empty instance
+    // invalid input, just create empty instance
     if (![dict isKindOfClass:[NSDictionary class]]) {
         if (err) *err = [JSONModelError errorInvalidDataWithMessage:@"Attempt to initialize JSONModel object using initWithDictionary:error: but the dictionary parameter was not an 'NSDictionary'."];
         return nil;
     }
 
-    //create a class instance
+    // create a class instance
     self = [self init];
     if (!self) {
-
-        //super init didn't succeed
+        // super init didn't succeed
         if (err) *err = [JSONModelError errorModelIsInvalid];
         return nil;
     }
 
-    //check incoming data structure
+    // check incoming data structure
     if (![self __doesDictionary:dict matchModelWithKeyMapper:self.__keyMapper error:err]) {
         return nil;
     }
 
-    //import the data from a dictionary
+    // import the data from a dictionary
     if (![self __importDictionary:dict withKeyMapper:self.__keyMapper validation:YES error:err]) {
         return nil;
     }
 
-    //run any custom model validation
+    // run any custom model validation
     if (![self validate:err]) {
         return nil;
     }
 
-    //model is valid! yay!
+    // model is valid! yay!
     return self;
 }
 ```
