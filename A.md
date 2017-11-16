@@ -53,8 +53,6 @@
 
 一个比较常见的反例：`get` 。`get`这个词最好是用来做轻量级的取方法的开头，而如果用到其他的地方就会显得很不专业。
 
-举个书中的例子：
-
 `getPage(url)`
 
 通过这个方法名很难判断出这个方法是从缓存中获取页面数据还是从网页中获取。如果是从网页中获取，更专业的词应该是`fetchPage(url)`或者`downloadPage(url)`。
@@ -63,14 +61,12 @@
 
 那么如何选择一个专业的词汇呢？答案是在非常贴近你自己的意图的基础上，选择一个富有表现力的词汇。
 
-举几个例子：
-
 * 相对于`make`，选择`create`,`generate`,`build`等词汇会更有表现力，更加专业。
 * 相对于`find`，选择`search`,`extract`,`recover`等词汇会更有表现力，更加专业。
 * 相对于`retval`，选择一个能充分描述这个返回值的性质的名字。
 
 但是，有些情况下，泛泛的名字也是有意义的，例如一个交换变量的情景：
-```
+```objective-c
 if (right < left){
     tmp = right;
     right = left;
@@ -135,9 +131,7 @@ if (right < left){
 
 ### 1.1.2 给名字附带更多信息
 
-### 1.1.2.1 通用的约定
-
-推荐使用长的、描述性的方法和变量名。
+通用的约定，推荐使用长的、描述性的方法和变量名。
 
 推荐:
 ```objective-c
@@ -150,7 +144,7 @@ UITextField *passwordTextField
 ```objective-c
 UIButton *setBut;
 UILabel *title
-UITextField *PwdF
+UITextField *PwdTF
 ```
 
 方法名与方法类型 (`-`/`+` 符号)之间应该以空格间隔。方法段之间也应该以空格间隔（以符合 Apple 风格）。参数前应该总是有一个描述性的关键词。尽可能少用 "and" 这个词。它不应该用来阐明有多个参数，比如下面的 `initWithWidth:height:` 这个例子：
@@ -224,11 +218,6 @@ NSNumber *buildingZIPCode = [NSNumber numberWithInteger:10018];
 ### 1.1.3 决定名字最适合的长度
 
 名字越长越难记住，名字越短所持有的信息就越少，如何决定名字的长度呢？这里有几个原则：
-
-* 如果变量的作用域很小，可以取很短的名字
-* 驼峰命名中的单元不能超过3个
-* 不能使用大家不熟悉的缩写
-* 丢掉不必要的单元
 
 #### 1.1.3.1 如果变量的作用域很小，可以取很短的名字
 
@@ -463,16 +452,63 @@ if(!file_exists || is_protected){}
 
 为了让代码更有美感，采取以下实践会很有帮助：
 
-* 用换行和列对齐来让代码更加整齐
-* 选择一个有意义的顺序
-* 把代码分成"段落"
-* 保持风格一致性
+### 1.3.1 空格
 
-### 1.3.1 用换行和列对齐来让代码更加整齐
+* 缩进使用 4 个空格。 永远不要使用  tab, 确保你在 Xcode 的设置里面是这样设置的。
+* 方法的大括号和其他的大括号(`if`/`else`/`switch`/`while` 等) 总是在同一行开始，在新起一行结束。
+
+推荐:
+```objective-c
+if (user.isHappy) {
+    //Do something
+} 
+else {
+    //Do something else
+}
+```
+
+不推荐:
+```objective-c
+if (user.isHappy)
+{
+  //Do something
+} else {
+  //Do something else
+}
+```
+
+* 方法之间应该要有一个空行来帮助代码看起来清晰且有组织。 方法内的空格应该用来分离功能，但是通常不同的功能应该用新的方法来定义。
+* 在实现文件中的声明应该新起一行。
+* 应该总是让冒号对齐。有一些方法签名可能超过三个冒号，用冒号对齐可以让代码更具有可读性。即使有代码块存在，也应该用冒号对齐方法。
+
+推荐:
+```objective-c
+[UIView animateWithDuration:1.0
+                 animations:^{
+                     // something
+                 }
+                 completion:^(BOOL finished) {
+                     // something
+                 }];
+```
+
+不推荐:
+```objective-c
+[UIView animateWithDuration:1.0 animations:^{
+    // something
+} completion:^(BOOL finished) {
+    // something
+}];
+```
+
+如果自动对齐让可读性变得糟糕，那么应该在之前把 block 定义为变量，或者重新考虑你的代码签名设计。
+
+
+### 1.3.2 用换行和列对齐来让代码更加整齐
 
 有些时候，我们可以利用换行和列对齐来让代码显得更加整齐。
 
-#### 1.3.1.1 换行
+#### 1.3.2.1 换行
 
 换行比较常用在函数或方法的参数比较多的时候。
 
@@ -486,6 +522,7 @@ if(!file_exists || is_protected){}
     
 }
 ```
+
 不使用换行：
 ```objective-c
 - (void)requestWithUrl:(NSString*)url method:(NSString*)method params:(NSDictionary *)params success:(SuccessBlock)success failure:(FailuireBlock)failure{
@@ -493,8 +530,20 @@ if(!file_exists || is_protected){}
 }
 ```
 通过比较可以看出，如果不使用换行，就很难一眼看清楚都是用了什么参数，而且代码整体看上去整洁干净了很多。
+本指南关注代码显示效果以及在线浏览的可读性，所以换行是一个重要的主题。
 
-#### 1.3.1.2 列对齐
+```objective-c
+self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIdentifiers];
+```
+
+一个像上面的长行的代码在第二行以一个间隔（2个空格）延续
+
+```objective-c
+self.productsRequest = [[SKProductsRequest alloc]
+  initWithProductIdentifiers:productIdentifiers];
+```
+
+#### 1.3.2.2 列对齐
 
 在声明一组变量的时候，由于每个变量名的长度不同，导致了在变量名左侧对齐的情况下，等号以及右侧的内容没有对齐：
 ```objective-c
@@ -512,7 +561,7 @@ NSString *address = userInfo[@"address"];
 
 这二者的区别在条目数比较多以及变量名称长度相差较大的时候会更加明显。
 
-### 1.3.2 选择一个有意义的顺序
+### 1.3.3 选择一个有意义的顺序
 
 当涉及到相同变量（属性）组合的存取都存在的时候，最好以一个有意义的顺序来排列它们：
 
@@ -536,7 +585,7 @@ sexLabel.text     = model.sex;
 addressLabel.text = model.address;
 ```
 
-### 1.3.3 把代码分成"段落"
+### 1.3.4 把代码分成"段落"
 
 在写文章的时候，为了能让整个文章看起来结构清晰，我们通常会把大段文字分成一个个小的段落，让表达相同主旨的语言凑到一起，与其他主旨的内容分隔开来。
 
@@ -557,7 +606,8 @@ BigFunction {
   
 }
 ```
-### 1.3.4 保持风格一致性
+
+### 1.3.5 保持风格一致性(括号)
 
 有些时候，你的某些代码风格可能与大众比较容易接受的风格不太一样。但是如果你在你自己所写的代码各处能够保持你这种独有的风格，也是可以对代码的可读性有积极的帮助的。
 
@@ -577,6 +627,80 @@ if(condition)
 对于上面的两种写法，每个人对条件判断右侧的大括号的位置会有不同的看法。**但是无论你坚持的是哪一个，请在你的代码里做到始终如一。因为如果有某几个特例的话，是非常影响代码的阅读体验的。**
 
 我们要知道，一个逻辑清晰的代码也可以因为留白的不规则，格式不对齐，顺序混乱而让人很难读懂，这是十分让人痛心的事情。所以既然你的代码在命名上，逻辑上已经很优秀了，就不妨再费一点功夫把她打扮的漂漂亮亮的吧！
+
+在以下的地方使用 [Egyptian风格 括号]（代码段括号的开始位于一行的末尾，而不是另外起一行的风格。)
+
+* 控制语句 (if-else, for, switch)
+* 类的实现
+* 方法的实现
+
+## 1.3.6 利用代码块
+
+一个 GCC 非常模糊的特性，以及 Clang 也有的特性是，代码块如果在闭合的圆括号内的话，会返回最后语句的值
+
+```objective-c
+NSURL *url = ({
+    NSString *urlString = [NSString stringWithFormat:@"%@/%@", baseURLString, endpoint];
+    [NSURL URLWithString:urlString];
+});
+```
+
+### 1.3.6 Pragma Mark 
+
+> code organization is a matter of hygiene  (代码组织是卫生问题)
+
+我们十分赞成这句话。清晰地组织代码和规范地进行定义, 是你对自己以及其他阅读代码的人的尊重。
+
+`#pragma mark -`  是一个在类内部组织代码并且帮助你分组方法实现的好办法。 我们建议使用  `#pragma mark -` 来分离:
+
+- 不同功能组的方法
+- protocols 的实现
+- 对父类方法的重写
+
+```objective-c
+
+- (void)dealloc { /* ... */ }
+- (instancetype)init { /* ... */ }
+
+#pragma mark - View Lifecycle （View 的生命周期）
+
+- (void)viewDidLoad { /* ... */ }
+- (void)viewWillAppear:(BOOL)animated { /* ... */ }
+- (void)didReceiveMemoryWarning { /* ... */ }
+
+#pragma mark - Custom Accessors （自定义访问器）
+
+- (void)setCustomProperty:(id)value { /* ... */ }
+- (id)customProperty { /* ... */ }
+
+#pragma mark - IBActions  
+
+- (IBAction)submitData:(id)sender { /* ... */ }
+
+#pragma mark - Public
+
+- (void)publicMethod { /* ... */ }
+
+#pragma mark - Private
+
+- (void)zoc_privateMethod { /* ... */ }
+
+#pragma mark - UITableViewDataSource
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath { /* ... */ }
+
+#pragma mark - ZOCSuperclass
+
+// ... 重载来自 ZOCSuperclass 的方法
+
+#pragma mark - NSObject
+
+- (NSString *)description { /* ... */ }
+
+```
+
+上面的标记能明显分离和组织代码。你还可以用  cmd+Click 来快速跳转到符号定义地方。
+但是小心，即使 paragma mark 是一门手艺，但是它不是让你类里面方法数量增加的一个理由：类里面有太多方法说明类做了太多事情，需要考虑重构了。
 
 # 2. 如何写注释
 
@@ -641,13 +765,6 @@ if(condition)
 ```
 ## 2.3 常量
 
-在定义常量的时候，在其后面最好添加一个关于它是什么或者为什么它是这个值的原因。因为常量通常是不应该被修改的，所以最好把这个常量为什么是这个值说明一下：
-
-例如：
-```objective-c
-image_quality = 0.72 // 最佳的size/quanlity比率
-retry_limit   = 4    // 服务器性能所允许的请求失败的重试上限
-```
 常量应该以驼峰法命名，并以相关类名作为前缀。
 推荐使用常量来代替字符串字面值和数字，这样能够方便复用，而且可以快速修改而不需要查找和替换。常量应该用 `static` 声明为静态常量，而不要用 `#define`，除非它明确的作为一个宏来使用。
 
@@ -727,7 +844,6 @@ NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotificati
 
 > 好代码 > (坏代码 + 注释)
 
-## 字符串文档
 
 所有重要的方法，接口，分类以及协议定义应该有伴随的注释来解释它们的用途以及如何使用。更多的例子可以看 Google 代码风格指南中的 [File and Declaration Comments](http://google-styleguide.googlecode.com/svn/trunk/objcguide.xml#File_Comments)。
 
@@ -1119,7 +1235,7 @@ if( standard_number< received_number)
 如果你连编程里这种最小的事情都不好好做，那你又怎么证明你对编程是有追求的呢？
 
 
-#  类
+#  其它
 
 ##  类名
 
@@ -1290,7 +1406,7 @@ NSString * text;
 （注意：这个习惯和常量不同，这是主要从常用和可读性考虑。 C++ 的开发者偏好从变量名中分离类型，作为类型它应该是
 `NSString*` （对于从堆中分配的对象，对于C++是能从栈上分配的）格式。）
 
-#### 点符号
+### 点符号
 
 当使用 setter getter 方法的时候尽量使用点符号。应该总是用点符号来访问以及设置属性。
 
@@ -1342,11 +1458,10 @@ UIApplication.sharedApplication.delegate;
 
 ```
 
-#### 私有属性
+### 私有属性
 
 私有属性应该定义在类的实现文件的类的扩展 (匿名的 category) 中。不允许在有名字的 category(如 `ZOCPrivate`）中定义私有属性，除非你扩展其他类。
 
-**例子:**
 ```objective-c
 @interface ZOCViewController ()
 @property (nonatomic, strong) UIView *bannerView;
@@ -1445,154 +1560,6 @@ UIApplication.sharedApplication.delegate;
 @end
 ```
 
-
-#  美化代码
-
-###  空格
-
-* 缩进使用 4 个空格。 永远不要使用  tab, 确保你在 Xcode 的设置里面是这样设置的。
-* 方法的大括号和其他的大括号(`if`/`else`/`switch`/`while` 等) 总是在同一行开始，在新起一行结束。
-
-推荐:
-```objective-c
-if (user.isHappy) {
-    //Do something
-} 
-else {
-    //Do something else
-}
-```
-
-不推荐:
-```objective-c
-if (user.isHappy)
-{
-  //Do something
-} else {
-  //Do something else
-}
-```
-
-* 方法之间应该要有一个空行来帮助代码看起来清晰且有组织。 方法内的空格应该用来分离功能，但是通常不同的功能应该用新的方法来定义。
-* 在实现文件中的声明应该新起一行。
-* 应该总是让冒号对齐。有一些方法签名可能超过三个冒号，用冒号对齐可以让代码更具有可读性。即使有代码块存在，也应该用冒号对齐方法。
-
-推荐:
-```objective-c
-[UIView animateWithDuration:1.0
-                 animations:^{
-                     // something
-                 }
-                 completion:^(BOOL finished) {
-                     // something
-                 }];
-```
-
-不推荐:
-```objective-c
-[UIView animateWithDuration:1.0 animations:^{
-    // something
-} completion:^(BOOL finished) {
-    // something
-}];
-```
-
-如果自动对齐让可读性变得糟糕，那么应该在之前把 block 定义为变量，或者重新考虑你的代码签名设计。
-
-###  换行
-
-本指南关注代码显示效果以及在线浏览的可读性，所以换行是一个重要的主题。
-
-举个例子：
-
-```objective-c
-self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIdentifiers];
-```
-
-一个像上面的长行的代码在第二行以一个间隔（2个空格）延续
-
-```objective-c
-self.productsRequest = [[SKProductsRequest alloc]
-  initWithProductIdentifiers:productIdentifiers];
-```
-
-###  括号
-
-在以下的地方使用 [Egyptian风格 括号]（代码段括号的开始位于一行的末尾，而不是另外起一行的风格。
-
-* 控制语句 (if-else, for, switch)
-* 类的实现
-* 方法的实现
-
-# 代码组织
-
-> code organization is a matter of hygiene  (代码组织是卫生问题)
-
-我们十分赞成这句话。清晰地组织代码和规范地进行定义, 是你对自己以及其他阅读代码的人的尊重。
-
-## 利用代码块
-
-一个 GCC 非常模糊的特性，以及 Clang 也有的特性是，代码块如果在闭合的圆括号内的话，会返回最后语句的值
-
-```objective-c
-NSURL *url = ({
-    NSString *urlString = [NSString stringWithFormat:@"%@/%@", baseURLString, endpoint];
-    [NSURL URLWithString:urlString];
-});
-```
-
-### Pragma Mark
-
-`#pragma mark -`  是一个在类内部组织代码并且帮助你分组方法实现的好办法。 我们建议使用  `#pragma mark -` 来分离:
-
-- 不同功能组的方法
-- protocols 的实现
-- 对父类方法的重写
-
-```objective-c
-
-- (void)dealloc { /* ... */ }
-- (instancetype)init { /* ... */ }
-
-#pragma mark - View Lifecycle （View 的生命周期）
-
-- (void)viewDidLoad { /* ... */ }
-- (void)viewWillAppear:(BOOL)animated { /* ... */ }
-- (void)didReceiveMemoryWarning { /* ... */ }
-
-#pragma mark - Custom Accessors （自定义访问器）
-
-- (void)setCustomProperty:(id)value { /* ... */ }
-- (id)customProperty { /* ... */ }
-
-#pragma mark - IBActions  
-
-- (IBAction)submitData:(id)sender { /* ... */ }
-
-#pragma mark - Public
-
-- (void)publicMethod { /* ... */ }
-
-#pragma mark - Private
-
-- (void)zoc_privateMethod { /* ... */ }
-
-#pragma mark - UITableViewDataSource
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath { /* ... */ }
-
-#pragma mark - ZOCSuperclass
-
-// ... 重载来自 ZOCSuperclass 的方法
-
-#pragma mark - NSObject
-
-- (NSString *)description { /* ... */ }
-
-```
-
-上面的标记能明显分离和组织代码。你还可以用  cmd+Click 来快速跳转到符号定义地方。
-但是小心，即使 paragma mark 是一门手艺，但是它不是让你类里面方法数量增加的一个理由：类里面有太多方法说明类做了太多事情，需要考虑重构了。
 
 # 对象间的通讯
 
