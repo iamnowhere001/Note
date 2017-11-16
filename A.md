@@ -1,4 +1,3 @@
-如何提高代码的可读性? - 读《编写可读代码的艺术》
 
 # 0. 写在前面的话
 
@@ -27,13 +26,116 @@
 这本书讲的就是关于”如何提高代码的可读性“。
 总结下来，这本书从浅入深，在三个层次告诉了我们如何让代码易于理解：
 
-* **表层上的改进：**在命名方法（变量名，方法名），变量声明，代码格式，注释等方面的改进。
-* **控制流和逻辑的改进：**在控制流，逻辑表达式上让代码变得更容易理解。
-* **结构上的改进：**善于抽取逻辑，借助自然语言的描述来改善代码。
+* 表层上的改进：在命名方法（变量名，方法名），变量声明，代码格式，注释等方面的改进。
+* 控制流和逻辑的改进：在控制流，逻辑表达式上让代码变得更容易理解。
+* 结构上的改进：善于抽取逻辑，借助自然语言的描述来改善代码。
 
 # 1. 表层的改进
 
-### 通用的约定
+首先来讲最近简单的一层如何改进，涉及到以下几点：
+
+* 如何命名
+* 如何声明与使用变量
+* 如何简化表达式
+* 如何让代码具有美感
+* 如何写注释
+
+## 1.1 如何命名
+
+> 关键思想：把尽可能多的信息装入名字中。
+
+* 选择专业的词汇，避免泛泛的名字
+* 给名字附带更多信息
+* 决定名字最适合的长度
+* 名字不能引起歧义
+
+### 1.1.1 选择专业的词汇，避免泛泛的名字
+
+一个比较常见的反例：`get` 。`get`这个词最好是用来做轻量级的取方法的开头，而如果用到其他的地方就会显得很不专业。
+
+举个书中的例子：
+
+`getPage(url)`
+
+通过这个方法名很难判断出这个方法是从缓存中获取页面数据还是从网页中获取。如果是从网页中获取，更专业的词应该是`fetchPage(url)`或者`downloadPage(url)`。
+
+还有一个比较常见的反例：`returnValue`和`retval`。这两者都是“返回值”的意思，他们被滥用在各个有返回值的函数里面。其实这两个次除了携带他们本来的意思`返回值`以外并不具备任何其他的信息，是典型的泛泛的名字。
+
+那么如何选择一个专业的词汇呢？答案是在非常贴近你自己的意图的基础上，选择一个富有表现力的词汇。
+
+举几个例子：
+
+* 相对于`make`，选择`create`,`generate`,`build`等词汇会更有表现力，更加专业。
+* 相对于`find`，选择`search`,`extract`,`recover`等词汇会更有表现力，更加专业。
+* 相对于`retval`，选择一个能充分描述这个返回值的性质的名字。
+
+但是，有些情况下，泛泛的名字也是有意义的，例如一个交换变量的情景：
+```
+if (right < left){
+    tmp = right;
+    right = left;
+    left = tmp;
+}
+```
+像上面这种`tmp`只是作为一个临时存储的情况下，tmp表达的意思就比较贴切了。因此，像tmp这个名字，只适用于短期存在而且特性为临时性的变量。
+
+```objective-c
+/**
+ 档案类别
+ */
+@interface YMMArticleGroupApiManager : BaseApiManager
+
+/// 获取档案类别列表
++ (void)fetchArticleGroupListWithUid:(NSString *)uid
+                             otherId:(NSString *)otherId
+                             success:(void(^)(NSArray *array))success
+                                fail:(void(^)(NSString *msg))fail;
+                                
++ (void)fetchArticleGroupListWithUid:(NSString *)uid
+                             otherId:(NSString *)otherId
+                            isSeeImg:(BOOL)isSeeImg
+                             success:(void(^)(NSArray *array))success
+                                fail:(void(^)(NSString *msg))fail;
+
+/// 编辑档案类别
++ (void)editArticleGroupWithGroupId:(NSString *)groupId
+                          groupName:(NSString *)groupName
+                           isPublic:(BOOL)isPublic
+                            success:(void(^)(id response))success
+                               fail:(void(^)(NSString *msg))fail;
+
+/// 编辑档案类别公开状态
++ (void)editArticleGroupPublicStateWithGroupId:(NSString *)groupId
+                                       success:(void(^)(id response))success
+                                          fail:(void(^)(NSString *msg))fail;
+
+/// 批量移动档案
++ (void)moveArticleWithImageIds:(NSString *)imageIds
+                        groupId:(NSString *)groupId
+                        success:(void(^)(NSString *msg))success
+                           fail:(void(^)(NSString *msg))fail;
+
+/// 新建档案类别并移动档案
++ (void)moveArticleWithImageIds:(NSString *)imageIds
+                      groupName:(NSString *)groupName
+                       isPublic:(NSString *)isPublic
+                        success:(void(^)(NSString *msg))success
+                           fail:(void(^)(NSString *msg))fail;
+
+/// 批量删除档案
++ (void)deleteArticleWithImageIds:(NSString *)ImageIds
+                          success:(void(^)(NSString *msg))success
+                             fail:(void(^)(NSString *msg))fail;
+
+/// 档案类别置顶
++ (void)topArticleGroupWithGroupId:(NSString *)groupId
+                           success:(void(^)(NSString *msg))success
+                              fail:(void(^)(NSString *msg))fail;
+```
+
+### 1.1.2 给名字附带更多信息
+
+### 1.1.2.1 通用的约定
 
 推荐使用长的、描述性的方法和变量名。
 
@@ -50,65 +152,6 @@ UIButton *setBut;
 UILabel *title
 UITextField *PwdF
 ```
-###  常量
-
-常量应该以驼峰法命名，并以相关类名作为前缀。
-推荐使用常量来代替字符串字面值和数字，这样能够方便复用，而且可以快速修改而不需要查找和替换。常量应该用 `static` 声明为静态常量，而不要用 `#define`，除非它明确的作为一个宏来使用。
-
-推荐:
-```objective-c
-static const NSTimeInterval ZOCSignInViewControllerFadeOutAnimationDuration = 0.4;
-static NSString * const ZOCCacheControllerDidClearCacheNotification = @"ZOCCacheControllerDidClearCacheNotification";
-static const CGFloat ZOCImageThumbnailHeight = 50.0f;
-```
-
-不推荐:
-```objective-c
-#define CompanyName @"Apple Inc."
-#define magicNumber 42
-```
-
-常量应该在头文件中以这样的形式暴露给外部：
-
-```objective-c
-/// 注册成功
-FOUNDATION_EXPORT NSString *const kRegisterSuccessNotification;
-/// 登录成功
-FOUNDATION_EXPORT NSString *const kLoginSuccessNotification;
-/// 退出登录
-FOUNDATION_EXPORT NSString *const kLogoutNotification;
-/// 更新用户信息
-FOUNDATION_EXPORT NSString *const kUpdateUserInfoNotification;
-```
-并在实现文件中为它赋值。
-```objective-c
- // 注册成功
-NSString *const kRegisterSuccessNotification = @"RegisterSuccessNotification";
-// 登录成功
-NSString *const kLoginSuccessNotification = @"LoginSuccessNotification";
-// 退出登录
-NSString *const kLogoutNotification = @"LogoutNotification";
-// 更新用户信息
-NSString *const kUpdateUserInfoNotification = @"UpdateUserInfoNotification";
-```
-
-### NSNotification
-
-当你定义你自己的 `NSNotification` 的时候你应该把你的通知的名字定义为一个字符串常量，就像你暴露给其他类的其他字符串常量一样。你应该在公开的接口文件中将其声明为 `extern` 的， 并且在对应的实现文件里面定义。
-
-因为你在头文件中暴露了符号，所以你应该按照统一的命名空间前缀法则，用类名前缀作为这个通知名字的前缀。
-
-同时，用一个 Did/Will 这样的动词以及用 "Notifications" 后缀来命名这个通知也是一个好的实践。
-
-```objective-c
-// Foo.h
-extern NSString * const ZOCFooDidBecomeBarNotification
-
-// Foo.m
-NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotification";
-```
-
-###  方法
 
 方法名与方法类型 (`-`/`+` 符号)之间应该以空格间隔。方法段之间也应该以空格间隔（以符合 Apple 风格）。参数前应该总是有一个描述性的关键词。尽可能少用 "and" 这个词。它不应该用来阐明有多个参数，比如下面的 `initWithWidth:height:` 这个例子：
 
@@ -129,8 +172,6 @@ NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotificati
 - (instancetype)initWith:(int)width and:(int)height;  // Never do this.
 ```
 
-##  字面值
-
 使用字面值来创建不可变的 `NSString`, `NSDictionary`, `NSArray`, 和 `NSNumber` 对象。注意不要将 `nil` 传进 `NSArray` 和 `NSDictionary` 里，因为这样会导致崩溃。
 
 ```objective-c
@@ -149,69 +190,6 @@ NSNumber *buildingZIPCode = [NSNumber numberWithInteger:10018];
 ```
 
 如果要用到这些类的可变副本，我们推荐使用 `NSMutableArray`, `NSMutableString` 这样的类。
-
-首先来讲最近简单的一层如何改进，涉及到以下几点：
-
-* 如何命名
-* 如何声明与使用变量
-* 如何简化表达式
-* 如何让代码具有美感
-* 如何写注释
-
-## 1.1 如何命名
-
-> 关键思想：把尽可能多的信息装入名字中。
-
-这里的多指的是有价值的多。那么如何做到有价值呢？作者介绍了以下几个建议：
-
-* 选择专业的词汇，避免泛泛的名字
-* 给名字附带更多信息
-* 决定名字最适合的长度
-* 名字不能引起歧义
-
-### 1.1.1 选择专业的词汇，避免泛泛的名字
-
-一个比较常见的反例：`get` 。
-
-`get`这个词最好是用来做轻量级的取方法的开头，而如果用到其他的地方就会显得很不专业。
-
-举个书中的例子：
-
-`getPage(url)`
-
-通过这个方法名很难判断出这个方法是从缓存中获取页面数据还是从网页中获取。如果是从网页中获取，更专业的词应该是`fetchPage(url)`或者`downloadPage(url)`。
-
-还有一个比较常见的反例：`returnValue`和`retval`。这两者都是“返回值”的意思，他们被滥用在各个有返回值的函数里面。其实这两个次除了携带他们本来的意思`返回值`以外并不具备任何其他的信息，是典型的泛泛的名字。
-
-那么如何选择一个专业的词汇呢？答案是在非常贴近你自己的意图的基础上，选择一个富有表现力的词汇。
-
-举几个例子：
-
-* 相对于`make`，选择`create`,`generate`,`build`等词汇会更有表现力，更加专业。
-* 相对于`find`，选择`search`,`extract`,`recover`等词汇会更有表现力，更加专业。
-* 相对于`retval`，选择一个能充分描述这个返回值的性质的名字，例如：
-
-```
-var euclidean_norm = function (v){
-    var retval = 0.0;
-    for (var i = 0; i < v.length; i += 1;)
-       retval += v[i] * v[i];
-    return Match.sqrt(retval);
-}
-```
-这里的`retval`表示的是“平方的和”，因此`sum_squares`这个词更加贴切你的意图，更加专业。
-
-但是，有些情况下，泛泛的名字也是有意义的，例如一个交换变量的情景：
-```
-if (right < left){
-    tmp = right;
-    right = left;
-    left = tmp;
-}
-```
-像上面这种`tmp`只是作为一个临时存储的情况下，tmp表达的意思就比较贴切了。因此，像tmp这个名字，只适用于短期存在而且特性为临时性的变量。
-
-### 1.1.2 给名字附带更多信息
 
 除了选择一个专业，贴切意图的词汇，我们也可以通过添加一些前后缀来给这个词附带更多的信息。这里所指的更多的信息有三种：
 
@@ -424,15 +402,9 @@ class LargeCass{
   }
 }
 ```
-**所以在设计类的时候如果这个数据（变量）可以通过方法参数来传递，就不要以成员变量来保存它。**
+所以在设计类的时候如果这个数据（变量）可以通过方法参数来传递，就不要以成员变量来保存它。
 
 ### 1.2.5 缩短变量声明与使用其代码的距离
-
-在实现一个函数的时候，我们可能会声明比较多的变量，但这些变量的使用位置却不都是在函数开头。
-
-有一个比较不好的习惯就是无论变量在当前函数的哪个位置使用，都在一开始（函数的开头）就声明了它们。这样可能导致的问题是：阅读代码的人读到函数后半部分的时候就忘记了这个变量的类型和初始值；而且因为在函数的开头就声明了好几个变量，也对阅读代码的人的大脑造成了负担，因为人的短期记忆是有限的，特别是记一些暂时还不知道怎么用的东西。
-
-因此，如果在函数内部需要在不同地方使用几个不同的变量，建议在真正使用它们之前再声明它。
 
 ### 1.2.6 变量最好只写一次
 
@@ -441,10 +413,6 @@ class LargeCass{
 ### 1.2.7 如何简化表达式
 
 有些表达式比较长，很难让人马上理解。这时候最好可以将其拆分成更容易的几个小块。可以尝试下面的几个方法：
-
-* 使用解释变量
-* 使用总结变量
-* 使用德摩根定理
 
 #### 1.2.7.1 使用解释变量
 
@@ -680,6 +648,55 @@ if(condition)
 image_quality = 0.72 // 最佳的size/quanlity比率
 retry_limit   = 4    // 服务器性能所允许的请求失败的重试上限
 ```
+常量应该以驼峰法命名，并以相关类名作为前缀。
+推荐使用常量来代替字符串字面值和数字，这样能够方便复用，而且可以快速修改而不需要查找和替换。常量应该用 `static` 声明为静态常量，而不要用 `#define`，除非它明确的作为一个宏来使用。
+
+推荐:
+```objective-c
+static const NSTimeInterval ZOCSignInViewControllerFadeOutAnimationDuration = 0.4;
+static NSString * const ZOCCacheControllerDidClearCacheNotification = @"ZOCCacheControllerDidClearCacheNotification";
+static const CGFloat ZOCImageThumbnailHeight = 50.0f;
+```
+
+不推荐:
+```objective-c
+#define CompanyName @"Apple Inc."
+#define magicNumber 42
+```
+
+常量应该在头文件中以这样的形式暴露给外部：
+
+```objective-c
+/// 注册成功
+FOUNDATION_EXPORT NSString *const kRegisterSuccessNotification;
+/// 登录成功
+FOUNDATION_EXPORT NSString *const kLoginSuccessNotification;
+/// 退出登录
+FOUNDATION_EXPORT NSString *const kLogoutNotification;
+/// 更新用户信息
+FOUNDATION_EXPORT NSString *const kUpdateUserInfoNotification;
+```
+并在实现文件中为它赋值。
+```objective-c
+ // 注册成功
+NSString *const kRegisterSuccessNotification = @"RegisterSuccessNotification";
+// 登录成功
+NSString *const kLoginSuccessNotification = @"LoginSuccessNotification";
+// 退出登录
+NSString *const kLogoutNotification = @"LogoutNotification";
+// 更新用户信息
+NSString *const kUpdateUserInfoNotification = @"UpdateUserInfoNotification";
+```
+### 2.3.1 通知
+当你定义你自己的 `NSNotification` 的时候你应该把你的通知的名字定义为一个字符串常量，就像你暴露给其他类的其他字符串常量一样。你应该在公开的接口文件中将其声明为 `extern` 的， 并且在对应的实现文件里面定义。
+
+```objective-c
+// Foo.h
+extern NSString * const ZOCFooDidBecomeBarNotification
+
+// Foo.m
+NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotification";
+```
 
 ## 2.4 全局观的概述
 
@@ -709,6 +726,61 @@ retry_limit   = 4    // 服务器性能所允许的请求失败的重试上限
 其实好的代码是自解释的，由于其命名的合理以及架构的清晰，几乎不需要注释来向阅读代码的人添加额外的信息，书中有一个公式可以很形象地表明一个好的代码本身的重要性：
 
 > 好代码 > (坏代码 + 注释)
+
+## 字符串文档
+
+所有重要的方法，接口，分类以及协议定义应该有伴随的注释来解释它们的用途以及如何使用。更多的例子可以看 Google 代码风格指南中的 [File and Declaration Comments](http://google-styleguide.googlecode.com/svn/trunk/objcguide.xml#File_Comments)。
+
+简而言之：有长的和短的两种字符串文档。
+
+短文档适用于单行的文件，包括注释斜杠。它适合简短的函数，特别是（但不仅仅是）非 public 的 API：
+
+```
+// Return a user-readable form of a Frobnozz, html-escaped.
+```
+
+如果描述超过一行，应改用长字符串文档：
+
+ * 以`/**`开始
+ * 换行写一句总结的话，以`?或者!或者.`结尾。
+ * 空一行
+ * 在与第一行对齐的位置开始写剩下的注释
+ * 最后用`*/`结束。
+
+```
+/**
+ This comment serves to demonstrate the format of a docstring.
+
+ Note that the summary line is always at most one line long, and
+ after the opening block comment, and each line of text is preceded
+ by a single space.
+*/
+```
+
+一个函数必须有一个字符串文档，除非它符合下面的所有条件：
+
+* 非公开
+* 很短
+* 显而易见
+
+字符串文档应该描述函数的调用符号和语义，而不是它如何实现。
+
+注释应该用来解释特定的代码做了什么。所有的注释必须被持续维护或者干脆就删掉。
+
+一个类的文档应该只在 .h 文件里用 Doxygen/AppleDoc 的语法书写。 方法和属性都应该提供文档。
+
+```objective-c
+/**
+ *  Designated initializer.
+ *
+ *  @param  store  The store for CRUD operations.
+ *  @param  searchService The search service used to query the store.
+ *
+ *  @return A ZOCCRUDOperationsStore object.
+ */
+- (instancetype)initWithOperationsStore:(id<ZOCGenericStoreProtocol>)store
+                          searchService:(id<ZOCGenericSearchServiceProtocol>)searchService;
+```
 
 # 3. 控制流和逻辑的改进
 
@@ -1047,31 +1119,6 @@ if( standard_number< received_number)
 如果你连编程里这种最小的事情都不好好做，那你又怎么证明你对编程是有追求的呢？
 
 
-------
-#  命名
-
-##  通用的约定
-
-推荐使用长的、描述性的方法和变量名。
-
-**推荐:**
-```objective-c
-UIButton *settingsButton;
-UILabel *titleLabel
-UITextField *passwordTextField
-```
-
-**不推荐:**
-```objective-c
-UIButton *setBut;
-UILabel *title
-UITextField *PwdF
-```
-
-
-
-------
-
 #  类
 
 ##  类名
@@ -1163,7 +1210,6 @@ secondary initializer 是一种提供默认值、行为到 designated initialize
 
 在你的 API 中要构成习惯以及保持始终如一的，此外，通过对你代码的小调整你可以提高可读性：在简单的浏览的时候你可以区分哪些方法是返回你类的实例的。你以后会感谢这些注意过的小细节的。
 
-
 ###  初始化模式
 
 ####  类簇 （class cluster)
@@ -1174,9 +1220,7 @@ secondary initializer 是一种提供默认值、行为到 designated initialize
 
 如果这个描述听起来很熟悉，说明你的直觉是对的。 Class cluster 是 Apple 对[抽象工厂](https://en.wikipedia.org/wiki/Abstract_factory_pattern)设计模式的称呼。
 
-
 class cluster 的想法很简单: 使用信息进行(类的)初始化处理期间，会使用一个抽象类（通常作为初始化方法的参数或者判定环境的可用性参数）来完成特定的逻辑或者实例化一个具体的子类。而这个"Public Facing（面向公众的）"类，必须非常清楚他的私有子类，以便在面对具体任务的时候有能力返回一个恰当的私有子类实例。对调用者来说只需知道对象的各种API的作用即可。这个模式隐藏了他背后复杂的初始化逻辑，调用者也不需要关心背后的实现。
-
 
 Class clusters 在 Apple 的Framework 中广泛使用：一些明显的例子比如  `NSNumber` 可以返回不同类型给你的子类，取决于 数字类型如何提供  (Integer, Float, etc...) 或者 `NSArray` 返回不同的最优存储策略的子类。
 
@@ -1233,12 +1277,11 @@ Class clusters 在 Apple 的Framework 中广泛使用：一些明显的例子比
 
 属性应该尽可能描述性地命名，避免缩写，并且是小写字母开头的驼峰命名。我们的工具可以很方便地帮我们自动补全所有东西。所以没理由少打几个字符了，并且最好尽可能在你源码里表达更多东西。
 
-**例子 :**
 ```objective-c
 NSString *text;
 ```
 
-**不要这样 :**
+不要这样 :
 ```objective-c
 NSString* text;
 NSString * text;
@@ -1251,14 +1294,13 @@ NSString * text;
 
 当使用 setter getter 方法的时候尽量使用点符号。应该总是用点符号来访问以及设置属性。
 
-**例子:**
 ```Objective-C
 view.backgroundColor = [UIColor orangeColor];
 [UIApplication sharedApplication].delegate;
 
 ```
 
-**不要这样:**
+不要这样:
 ```Objective-C
 [view setBackgroundColor:[UIColor orangeColor]];
 UIApplication.sharedApplication.delegate;
@@ -1552,67 +1594,6 @@ NSURL *url = ({
 上面的标记能明显分离和组织代码。你还可以用  cmd+Click 来快速跳转到符号定义地方。
 但是小心，即使 paragma mark 是一门手艺，但是它不是让你类里面方法数量增加的一个理由：类里面有太多方法说明类做了太多事情，需要考虑重构了。
 
-## 字符串文档
-
-所有重要的方法，接口，分类以及协议定义应该有伴随的注释来解释它们的用途以及如何使用。更多的例子可以看 Google 代码风格指南中的 [File and Declaration Comments](http://google-styleguide.googlecode.com/svn/trunk/objcguide.xml#File_Comments)。
-
-简而言之：有长的和短的两种字符串文档。
-
-短文档适用于单行的文件，包括注释斜杠。它适合简短的函数，特别是（但不仅仅是）非 public 的 API：
-
-```
-// Return a user-readable form of a Frobnozz, html-escaped.
-```
-
-如果描述超过一行，应改用长字符串文档：
-
- * 以`/**`开始
- * 换行写一句总结的话，以`?或者!或者.`结尾。
- * 空一行
- * 在与第一行对齐的位置开始写剩下的注释
- * 最后用`*/`结束。
-
-```
-/**
- This comment serves to demonstrate the format of a docstring.
-
- Note that the summary line is always at most one line long, and
- after the opening block comment, and each line of text is preceded
- by a single space.
-*/
-```
-
-一个函数必须有一个字符串文档，除非它符合下面的所有条件：
-
-* 非公开
-* 很短
-* 显而易见
-
-字符串文档应该描述函数的调用符号和语义，而不是它如何实现。
-
-##  注释
-
-当它需要的时候，注释应该用来解释特定的代码做了什么。所有的注释必须被持续维护或者干脆就删掉。
-
-###  头文档
-
-一个类的文档应该只在 .h 文件里用 Doxygen/AppleDoc 的语法书写。 方法和属性都应该提供文档。
-
-例子: 
-
-```objective-c
-/**
- *  Designated initializer.
- *
- *  @param  store  The store for CRUD operations.
- *  @param  searchService The search service used to query the store.
- *
- *  @return A ZOCCRUDOperationsStore object.
- */
-- (instancetype)initWithOperationsStore:(id<ZOCGenericStoreProtocol>)store
-                          searchService:(id<ZOCGenericSearchServiceProtocol>)searchService;
-```
-
 # 对象间的通讯
 
 对象之间需要通信，这也是所有软件的基础。再非凡的软件也需要通过对象通信来完成复杂的目标。本章将深入讨论一些设计概念，以及如何依据这些概念来设计出良好的架构。
@@ -1700,86 +1681,4 @@ __weak __typeof(self)weakSelf = self;
 ```objective-c
 __weak __typeof(self)weakSelf = self;
 __strong __typeof(weakSelf)strongSelf = weakSelf;
-```
-
-## 委托和数据源
-
-[委托模式](https://www.wikiwand.com/zh/%E5%A7%94%E6%89%98%E6%A8%A1%E5%BC%8F) 是 Apple 的框架里面使用广泛的模式，同时它是四人帮的书“设计模式”中的重要模式之一。委托代理模式是单向的，消息的发送方（委托方）需要知道接收方（代理方）是谁，反过来就没有必要了。对象之间耦合较松，发送方仅需知道它的代理方是否遵守相关 protocol 即可。
-
-本质上，委托代理模式仅需要代理方提供一些回调方法，即代理方需要实现一系列空返回值的方法。
-
-不幸的是 Apple 的 API 并没有遵守这个原则，开发者也效仿 Apple 进入了一个误区。典型的例子就是 [UITableViewDelegate](https://developer.apple.com/library/ios/documentation/uikit/reference/UITableViewDelegate_Protocol/Reference/Reference.html) 协议。
-
-它的一些方法返回 void 类型，就像我们所说的回调：
-
-```objective-c
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath;
-```
-
-但是其他的就不是那么回事：
-
-```objective-c
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
-- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender;
-```
-
-当委托者询问代理者一些信息的时候，这就暗示着信息是从代理者流向委托者而非相反的过程。 这(译者注：委托者 ==Data==> 代理者)是概念性的不同，须用另一个新的名字来描述这种模式：数据源模式。
-
-可能有人会说 Apple 有一个 [UITableViewDataSouce](https://developer.apple.com/library/ios/documentation/uikit/reference/UITableViewDataSource_Protocol/Reference/Reference.html)  protocol 来做这个（虽然使用委托模式的名字），但是实际上它的方法是用来提供真实的数据应该如何被展示的信息的。
-
-```objective-c
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
-```
-
-此外，以上两个方法 Apple 混合了展示层和数据层，这显的非常糟糕，但是很少的开发者感到糟糕。而且我们在这里把空返回值和非空返回值的方法都天真地叫做委托方法。
-
-为了分离概念，我们应该这样做：
-
-* 委托模式(delegate pattern)：事件发生的时候，委托者需要通知代理者。
-* 数据源模式(datasource pattern): 委托者需要从数据源对象拉取数据。
-
-这个是实际的例子：
-
-```objective-c
-@class ZOCSignUpViewController;
-
-@protocol ZOCSignUpViewControllerDelegate <NSObject>
-- (void)signUpViewControllerDidPressSignUpButton:(ZOCSignUpViewController *)controller;
-@end
-
-@protocol ZOCSignUpViewControllerDataSource <NSObject>
-- (ZOCUserCredentials *)credentialsForSignUpViewController:(ZOCSignUpViewController *)controller;
-@end
-
-@interface ZOCSignUpViewController : UIViewController
-@property (nonatomic, weak) id<ZOCSignUpViewControllerDelegate> delegate;
-@property (nonatomic, weak) id<ZOCSignUpViewControllerDataSource> dataSource;
-@end
-
-```
-
-代理方法必须以调用者(即委托者)作为第一个参数，就像上面的例子一样。否则代理者无法区分不同的委托者实例。换句话说，调用者(委托者)没有被传递给代理，那就没有方法让代理处理两个不同的委托者，所以下面这种写法人神共怒：
-
-```objective-c
-- (void)calculatorDidCalculateValue:(CGFloat)value;
-```
-
-默认情况下，代理者需要实现 protocol 的方法。可以用`@required` 和  `@optional` 关键字来标记方法是否是必要的还是可选的(默认是 `@required`: 必需的)。
-
-```objective-c
-@protocol ZOCSignUpViewControllerDelegate <NSObject>
-@required
-- (void)signUpViewController:(ZOCSignUpViewController *)controller didProvideSignUpInfo:(NSDictionary *)dict;
-@optional
-- (void)signUpViewControllerDidPressSignUpButton:(ZOCSignUpViewController *)controller;
-@end
-```
-
-对于可选的方法，委托者必须在发送消息前检查代理是否确实实现了特定的方法（否则会 crash）：
-```objective-c
-if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSignUpButton:)]) {
-    [self.delegate signUpViewControllerDidPressSignUpButton:self];
-}
 ```
