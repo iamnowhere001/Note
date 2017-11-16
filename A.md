@@ -76,33 +76,33 @@
 * 相对于`find`，选择`search`,`extract`,`recover`等词汇会更有表现力，更加专业。
 * 相对于`retval`，选择一个能充分描述这个返回值的性质的名字，例如：
 
-````
+```
 var euclidean_norm = function (v){
     var retval = 0.0;
     for (var i = 0; i < v.length; i += 1;)
        retval += v[i] * v[i];
     return Match.sqrt(retval);
 }
-````
+```
 这里的`retval`表示的是“平方的和”，因此`sum_squares`这个词更加贴切你的意图，更加专业。
 
 但是，有些情况下，泛泛的名字也是有意义的，例如一个交换变量的情景：
-````
+```
 if (right < left){
     tmp = right;
     right = left;
     left = tmp;
 }
-````
+```
 像上面这种`tmp`只是作为一个临时存储的情况下，tmp表达的意思就比较贴切了。因此，像tmp这个名字，只适用于短期存在而且特性为临时性的变量。
 
 ### 给名字附带更多信息
 
 除了选择一个专业，贴切意图的词汇，我们也可以通过添加一些前后缀来给这个词附带更多的信息。这里所指的更多的信息有三种：
 
-* 变量的单位
-* 变量的属性
-* 变量的格式
+1. 变量的单位
+2. 变量的属性
+3. 变量的格式
 
 ### 为变量添加单位
 
@@ -125,7 +125,7 @@ if (right < left){
 * 使用大驼峰命名来表示类名：`HomeViewController`。
 * 使用小驼峰命名来表示属性名：`userNameLabel`。
 * 使用下划线连接词来表示变量名：`product_id`。
-* 使用kConstantName来表示常量：`kCacheDuraction`。
+* 使用`kConstantName`来表示常量：`kCacheDuraction`。
 * 使用MACRO_NAME来表示宏：`SCREEN_WIDTH`。
 
 ### 决定名字最适合的长度
@@ -135,27 +135,27 @@ if (right < left){
 * 如果变量的作用域很小，可以取很短的名字
 * 驼峰命名中的单元不能超过3个
 * 不能使用大家不熟悉的缩写
-*丢掉不必要的单元
+* 丢掉不必要的单元
 
 ### 如果变量的作用域很小，可以取很短的名字
 
 如果一个变量作用域很小：则可以给它取一个很短的名字也无妨。
 
 看下面这个例子：
-````
+```swift
 if(debug){
     map <string,int>m;
     LookUpNamesNumbers(&m);
     Print(m);
 }
-````
+```
 在这里，变量的类型和使用范围一眼可见，读者可以了解这段代码的所有信息，所以即使是取m这个非常简短的名字，也不影响读者来理解作者的意图。
 
 相反的，如果`m`是一个全局变量，当你看到下面这段代码就会很头疼，因为你不知道它的类型并不明确:
-````
+```objective-c
 LookUpNamesNumbers(&m);
 Print(m);
-````
+```
 
 ### 驼峰命名中的单元不能超过3个
 
@@ -219,10 +219,10 @@ Print(m);
 ### 没有价值的临时变量
 
 有些变量的声明完全是多此一举，它们的存在反而加大了阅读代码的成本：
-````
+```swift
 let now = datetime.datatime.now()
 root_message.last_view_time = now   
-````
+```
 上面这个`now`变量的存在是毫无意义的，因为：
 
 * 没有拆分任何复杂的表达式
@@ -238,7 +238,7 @@ root_message.last_view_time = now
 有的时候为了达成一个目标，把一件事情分成了两件事情来做，这两件事情中间需要一个变量来传递结果。但往往这件事情不需要分成两件事情来做，这个“中间结果”也就不需要了：
 
 看一个比较常见的需求，一个把数组中的某个值移除的例子：
-````
+```objective-c
 var remove_value = function (array, value_to_remove){
     var index_to_remove = null;
     for (var i = 0; i < array.length; i+=1){
@@ -251,14 +251,14 @@ var remove_value = function (array, value_to_remove){
         array.splice(index_to_remove,1);
     }
 } 
-````
+```
 这里面把这个事情分成了两件事情来做：
 
 1. 找出要删除的元素的序号，保存在变量`index_to_remove`里面。
 2. 拿到`index_to_remove`以后使用`splice`方法删除它。（这段代码是JavaScript代码）
 
 这个例子对于变量的命名还是比较合格的，但实际上这里所使用的中间结果变量是完全不需要的，整个过程也不需要分两个步骤进行。来看一下如何一步实现这个需求：
-````
+```objective-c
 var remove_value = function (array, value_to_remove){
     for (var i = 0; i < array.length; i+=1){
         if (array[i] === value_to_remove){
@@ -267,7 +267,7 @@ var remove_value = function (array, value_to_remove){
         }
     }
 } 
-````
+```
 上面的方法里面，当知道应该删除的元素的序号i的时候，就直接用它来删除了应该删除的元素并立即返回。
 
 除了减轻了内存和处理器的负担（因为不需要开辟新的内容来存储结果变量以及可能不用完全走遍整个的for语句），阅读代码的人也会很快领会代码的意图。
@@ -279,7 +279,7 @@ var remove_value = function (array, value_to_remove){
 变量的作用域越广，就越难追踪它，值也越难控制，所以我们应该让你的**变量对尽量少的代码可见**。
 
 比如类的成员变量就相当于一个“小型局部变量”。如果这个类比较庞大，我们就会很难追踪它，因为所有方法都可以“隐式”调用它。所以相反地，如果我们可以把它“降格”为局部变量，就会很容易追踪它的行踪：
-````
+```objective-c
 //成员变量，比较难追踪
 class LargeCass{
   string str_;
@@ -293,9 +293,9 @@ class LargeCass{
      //using str_
   }
 }
-````
+```
 降格：
-````
+```objective-c
 //局部变量，容易追踪
 class LargeCass{
   
@@ -308,7 +308,7 @@ class LargeCass{
      //using str
   }
 }
-````
+```
 **所以在设计类的时候如果这个数据（变量）可以通过方法参数来传递，就不要以成员变量来保存它。**
 
 ### 缩短变量声明与使用其代码的距离
@@ -337,26 +337,26 @@ class LargeCass{
 
 `if line.split(':')[0].strip() == "root"`
 其实上面左侧的表达式其实得出的是用户名，我们可以用`username`来替换它：
-````
+```objective-c
 username = line.split(':')[0].strip()
 if username == "root"
-````
+```
 
 #### 使用总结变量
 
 除了以“变量”替换“算式”，还可以用“变量”来替换含有更多变量更复杂的内容，比如条件语句，这时候该变量可以被称为"总结变量"。使用书中的一个例子：
-````
+```objective-c
 if(request.user.id == document.owner_id){
    //do something 
 }
-````
+```
 上面这条判断语句所判断的是：“该文档的所有者是不是该用户”。我们可以使用一个总结性的变量user_owns_document来替换它：
-````
+```objective-c
 final boolean user_owns_document = (request.user.id == document.owner_id);
 if (user_owns_document){
    //do something
 }
-````
+```
 
 #### 使用德摩根定理
 
@@ -366,13 +366,13 @@ if (user_owns_document){
 2. `not(a and b and c)`等价于`(not a) or (not b) or (not c)`
 当我们条件语句里面存在外部取反的情况，就可以使用德摩根定理来做个转换。使用书中的一个例子：
 
-````
+```objective-c
 //使用德摩根定理转换以前
 if(!(file_exists && !is_protected)){}
 
 //使用德摩根定理转换以后
 if(!file_exists || is_protected){}
-````
+```
 
 ## 如何让代码具有美感
 
@@ -414,11 +414,11 @@ if(!file_exists || is_protected){}
 #### 列对齐
 
 在声明一组变量的时候，由于每个变量名的长度不同，导致了在变量名左侧对齐的情况下，等号以及右侧的内容没有对齐：
-````
+```objective-c
 NSString *name = userInfo[@"name"];
 NSString *sex = userInfo[@"sex"];
 NSString *address = userInfo[@"address"];
-````
+```
 而如果使用了列对齐的方法，让等号以及右侧的部分对齐的方式会使代码看上去更加整洁：
 
 ````
@@ -439,7 +439,7 @@ NSString *address = userInfo[@"address"];
 
 举个例子：相同集合里的元素同时出现的时候最好保证每个元素出现顺序是一致的。除了便于阅读这个好处以外，也有助于能发现漏掉的部分，尤其当元素很多的时候：
 
-````
+```objective-c
 //给model赋值
 model.name    = dict["name"]；
 model.sex     = dict["sex"]；
@@ -451,7 +451,7 @@ model.address = dict["address"]；
 nameLabel.text    = model.name;
 sexLabel.text     = model.sex;
 addressLabel.text = model.address;
-````
+```
 
 #### 把代码分成"段落"
 
@@ -460,8 +460,8 @@ addressLabel.text = model.address;
 而且除了让读者明确哪些内容是表达同一主旨之外，把文章分为一个个段落的好处还有便于找到你的阅读”脚印“，便于段落之间的导航；也可以让你的阅读具有一定的节奏感。
 
 其实这些道理同样适用于写代码：如果你可以把一个拥有好几个步骤的大段函数，以空行+注释的方法将每一个步骤区分开来，那么则会对读者理解该函数的功能有极大的帮助。这样一来，代码既能有一定的美感，也具备了可读性。其实可读性又何尝不是来自于规则，富有美感的代码呢？
-````
-BigFunction{
+```objective-c
+BigFunction {
   
      //step1:*****
      ....
@@ -473,24 +473,24 @@ BigFunction{
      ....
   
 }
-````
+```
 保持风格一致性
 
 有些时候，你的某些代码风格可能与大众比较容易接受的风格不太一样。但是如果你在你自己所写的代码各处能够保持你这种独有的风格，也是可以对代码的可读性有积极的帮助的。
 
 比如一个比较经典的代码风格问题：
-````
-if(condition){
+```objective-c
+if(condition) {
 
 }
-````
+```
 or:
-````
+```objective-c
 if(condition)
 {
 
 }
-````
+```
 对于上面的两种写法，每个人对条件判断右侧的大括号的位置会有不同的看法。但是无论你坚持的是哪一个，请在你的代码里做到始终如一。因为如果有某几个特例的话，是非常影响代码的阅读体验的。
 
 我们要知道，一个逻辑清晰的代码也可以因为留白的不规则，格式不对齐，顺序混乱而让人很难读懂，这是十分让人痛心的事情。所以既然你的代码在命名上，逻辑上已经很优秀了，就不妨再费一点功夫把她打扮的漂漂亮亮的吧！
@@ -518,16 +518,16 @@ if(condition)
 * 给不好的命名添加的注释
 
 ### 描述能立刻从代码自身就能立刻理解的代码意图的注释
-````
+```objective-c
 //add params1 and params2 and return sum of them
 - (int)addParam1:(int)param1 param2:(int)param2
-````
+```
 上面这个例子举的比较简单，但反映的问题很明显：这里面的注释是完全不需要的，它的存在反而增加了阅读代码的人的工作量。因为他从方法名就可以马上意会到这个函数的作用了。
 
 ### 给不好的命名添加的注释
-````
+```objective-c
 - (void)
-````
+```
 讲完了注释不应该是什么内容，现在讲一下注释应该是什么样的内容：
 
 ## 什么应该作为注释
@@ -555,20 +555,20 @@ if(condition)
 也可能你知道你现在实现的这个方案几乎就是”完美的“，因为如果使用了其他的方案，可能会消耗更多的资源等等。
 
 对于上面这些情况，你都有必要写上几个字作为注释来诚实的告诉阅读你的这段代码的人这段代码的情况，比如：
-````
+```objective-c
 //该方案有一个很容易忽略的陷阱：****
 //该方案是存在性能瓶颈，性能瓶颈在其中的**函数中
 //该方案的性能可能并不是最好的，因为如果使用某某算法的话可能会好很多
-````
+```
 ## 常量
 
 在定义常量的时候，在其后面最好添加一个关于它是什么或者为什么它是这个值的原因。因为常量通常是不应该被修改的，所以最好把这个常量为什么是这个值说明一下：
 
 例如：
-````
+```objective-c
 image_quality = 0.72 // 最佳的size/quanlity比率
 retry_limit   = 4    // 服务器性能所允许的请求失败的重试上限
-````
+```
 
 ### 全局观的概述
 
@@ -577,13 +577,13 @@ retry_limit   = 4    // 服务器性能所允许的请求失败的重试上限
 有时仅仅添加了几句话，可能就会让新人迅速地了解当前系统或者当前类的结构以及作用，而且这些也同样对开发过当前系统的人员迅速回忆出之前开发的细节有很大帮助。
 
 这些注释可以在一个类的开头（介绍这个类的职责，以及在整个系统中的角色）也可以在一个模块入口处。书中举了一个关于这种注释的例子：
-````
+```objective-c
 //这个文件包含了一些辅助函数，尾门的文件系统提供了更便利的接口
-````
+```
 再举一个iOS开发里众所周知的网络框架`AFNetworking`的例子。在`AFHTTPSessionManager`的头文件里说明了这个类的职责：
-````
+```objective-c
 //AFHTTPSessionManager` is a subclass of `AFURLSessionManager` with convenience methods for making HTTP requests. When a `baseURL` is provided, requests made with the `GET` / `POST` / et al. convenience methods can be made with relative paths
-````
+```
 在知道了什么不应该是注释以及什么应该是注释以后，我们来看一下一个真正合格的注释应该是什么样子的：
 
 > 注释应当有很高的信息/空间率
@@ -621,26 +621,26 @@ retry_limit   = 4    // 服务器性能所允许的请求失败的重试上限
 ### 条件语句中参数的顺序：
 
 首先比较一下下面两段代码，哪一个更容易读懂？
-````
+```objective-c
 //code 1
 if(length > 10)
 
 //code 2
 if(10 < length)
-````
+```
 大家习惯上应该会觉得code1容易读懂。
 
 再来看下面一个例子：
-````
+```objective-c
 //code 3
 if(received_number < standard_number) 
 
 //code 4
 if( standard_number< received_number)
-````
+```
 仔细看会发现，和上面那一组情况类似，大多数人还是会觉得code3更容易读懂。
 
-那么code1 和 code3有什么共性呢？
+那么 code1 和 code3 有什么共性呢？
 
 它们的共性就是：**左侧都是被询问的内容（通常是一个变量）；右侧都是用来做比较的内容（通常是一个常量）**
 
@@ -661,13 +661,13 @@ if( standard_number< received_number)
 
 ### 使用return提前返回
 
-在一个函数或是方法里，可能有一些情况是比较特殊或者极端的，对结果的产生影响很大（甚至是终止继续进行）。如果存在这些情况，我们应该把他们写在前面，用return来提前返回（或者返回需要返回的返回值）。
+在一个函数或是方法里，可能有一些情况是比较特殊或者极端的，对结果的产生影响很大（甚至是终止继续进行）。如果存在这些情况，我们应该把他们写在前面，用`return`来提前返回（或者返回需要返回的返回值）。
 
 这样做的好处是可以减少if/else语句的嵌套，也可以明确体现出：“哪些情况是引起异常的”。
 
 再举一个JSONModel里的例子，在initWithDictionary:error方法里面就有很多return操作，它们都体现出了“在什么情况下是不能成功将字典转化为model对象”的；而且在方法的最后返回了对象，说明如果到了这一步，则在转化的过程中通过了层层考验：
 
-````
+```objective-c
 -(id)initWithDictionary:(NSDictionary*)dict error:(NSError**)err
 {
     //check for nil input
@@ -709,7 +709,7 @@ if( standard_number< received_number)
     //model is valid! yay!
     return self;
 }
-````
+```
 
 # 四. 代码组织的改进
 
